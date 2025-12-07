@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+h1, h2, h3, h4, h5 {
+    font-family: 'Merriweather Sans', sans-serif;
+  }
+  
+  body, input, button, p {
+    font-family: 'Nunito Sans', sans-serif;
+  }
+  
