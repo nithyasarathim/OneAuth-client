@@ -1,8 +1,12 @@
+import { Routes, Route } from 'react-router-dom';
+
+import RegisterPage from './pages/auth/register/register.page.tsx';
+
 const App = () => {
   return (
-    <div>
-      
-    </div>
+    <Routes>
+      <Route path='/' element={<RegisterPage/>} />
+    </Routes>
   )
 }
 
