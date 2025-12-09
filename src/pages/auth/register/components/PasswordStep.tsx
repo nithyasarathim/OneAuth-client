@@ -1,18 +1,10 @@
 import { motion } from "framer-motion";
-
-interface PasswordInterface {
-  email: string;
-  password: string;
-  confirmPassword: string;
-  setPassword: (password: string) => void;
-  setConfirmPassword: (confirmPassword: string) => void;
-}
+import type { PasswordProps } from "../types/register.types";
 
 const smooth = {
   initial: { opacity: 0, x: 60, scale: 0.96 },
   animate: { opacity: 1, x: 0, scale: 1 },
   exit: { opacity: 0, x: -60, scale: 0.96 },
-  transition: { duration: 0.4, ease: [0.25, 0.8, 0.25, 1] },
 };
 
 const PasswordStep = ({
@@ -21,7 +13,7 @@ const PasswordStep = ({
   confirmPassword,
   setPassword,
   setConfirmPassword,
-}: PasswordInterface) => (
+}: PasswordProps) => (
   <motion.div key="password" {...smooth} className="space-y-6">
     <div className="text-center mb-10">
       <p className="text-sm text-gray-600">Choose a password for</p>

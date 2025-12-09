@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
+import type { StepIndicatorProps } from "../types/register.types";
 
-const StepIndicator = ({ step }: { step: number }) => {
+const StepIndicator = ({ step }: StepIndicatorProps) => {
   const totalSteps = 4;
   const progress = ((step - 1) / (totalSteps - 1)) * 100;
 
@@ -13,7 +14,6 @@ const StepIndicator = ({ step }: { step: number }) => {
         style={{ width: "calc(90% - 1.5rem)" }}
         initial={{ scaleX: 0 }}
         animate={{ scaleX: progress / 100 }}
-        transition={{ duration: 0.55, ease: [0.22, 0.61, 0.36, 1] }}
       />
 
       <div className="relative flex justify-between">
