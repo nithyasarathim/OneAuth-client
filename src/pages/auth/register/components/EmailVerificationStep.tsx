@@ -1,5 +1,10 @@
 import { motion } from "framer-motion";
 
+interface EmailInterface{
+    email: string,
+    setEmail: (email: string) => void;
+}
+
 const smooth = {
   initial: { opacity: 0, x: 60, scale: 0.96 },
   animate: { opacity: 1, x: 0, scale: 1 },
@@ -7,7 +12,7 @@ const smooth = {
   transition: { duration: 0.4, ease: [0.25, 0.8, 0.25, 1] },
 };
 
-const EmailStep = ({ email, setEmail }: any) => (
+const EmailStep = ({ email, setEmail }: EmailInterface) => (
   <motion.div key="email" {...smooth} className="space-y-5">
     <input
       type="email"
