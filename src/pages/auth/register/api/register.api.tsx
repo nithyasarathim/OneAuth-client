@@ -4,7 +4,7 @@ export const sendEmailVerification = async (email: string) => {
   return { success: true };
 };
 
-export const verifyOTP = async (otp: string) => {
+export const verifyOTP = async (email: string, otp: string) => {
   await new Promise((r) => setTimeout(r, 1500));
   console.log(otp);
   return { success: true };
