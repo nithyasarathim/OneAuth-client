@@ -1,17 +1,23 @@
+// services/auth.ts
+import { apiRequest } from "../../../utils/api";
+
 export const sendEmailVerification = async (email: string) => {
-  await new Promise((r) => setTimeout(r, 1500));
-  console.log(email);
-  return { success: true };
+  const data = await apiRequest("post", "/auth/register/verify-email", {
+    body: { email },
+  });
+  return data;
 };
 
 export const verifyOTP = async (email: string, otp: string) => {
-  await new Promise((r) => setTimeout(r, 1500));
-  console.log(otp);
-  return { success: true };
+  const data = await apiRequest("post", "/auth/register/verify-otp", {
+    body: { email, otp },
+  });
+  return data;
 };
 
 export const createAccount = async (email: string, password: string) => {
-  await new Promise((r) => setTimeout(r, 1500));
-  console.log(email, password);
-  return { success: true };
+  const data = await apiRequest("post", "/auth/register/create-account", {
+    body: { email, password },
+  });
+  return data;
 };
