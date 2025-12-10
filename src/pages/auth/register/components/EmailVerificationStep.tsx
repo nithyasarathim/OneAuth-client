@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import type { EmailVerificationProps } from "../types/register.types";
 
+
+
 const smooth = {
   initial: { opacity: 0, x: 60, scale: 0.96 },
   animate: { opacity: 1, x: 0, scale: 1 },
