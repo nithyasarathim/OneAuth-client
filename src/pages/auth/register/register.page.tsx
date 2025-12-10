@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
+import toast from "react-hot-toast";
 import AuthLayout from "../auth.layout";
 
 import StepIndicator from "./components/StepIndicator";
@@ -29,27 +30,37 @@ const RegisterPage = () => {
 
   const next = async () => {
     if (step === 1 && !validateEmail(email))
-      return alert("Enter a valid email");
-    if (step === 2 && !validateOTP(otp)) return alert("Enter all 4 digits");
+      return toast.error("Enter a valid email");
+    if (step === 2 && !validateOTP(otp))
+      return toast.error("Enter all 4 digits");
     if (step === 3 && !validatePassword(password, confirmPassword))
-      return alert("Invalid password");
+      return toast.error("Invalid password");
 
     setIsLoading(true);
+      if (step === 1) {
+        const res = await sendEmailVerification(email);
+        if (!res.success)
+          throw new Error(res.message || "Failed to verify email");
+      }
 
-    if (step === 1) await sendEmailVerification(email);
-    if (step === 2) await verifyOTP(email, otp);
-    if (step === 3) await createAccount(email, password);
+      if (step === 2) {
+        const res = await verifyOTP(email, otp);
+        if (!res.success) throw new Error(res.message || "Invalid OTP");
+      }
 
-    if (step === 3) {
-      setStep(4);
-      await new Promise((r) => setTimeout(r, 2000));
-      setIsLoading(false);
-      alert("Account created!");
-      return;
-    }
+      if (step === 3) {
+        const res = await createAccount(email, password);
+        if (!res.success)
+          throw new Error(res.message || "Failed to create account");
+      }
 
-    setStep(step + 1);
-    setIsLoading(false);
+      if (step === 3) {
+        setStep(4);
+        await new Promise((r) => setTimeout(r, 2000));
+        toast.success("Account created!");
+        return;
+      }
+      setStep(step + 1);
   };
 
   return (
