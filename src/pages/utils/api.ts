@@ -1,9 +1,10 @@
 // config/axios.ts
 import axios from "axios";
 import type { AxiosRequestConfig, Method } from "axios";
+import { AUTH_SERVER_URL } from "./env.ts";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_AUTH_SERVER_URL,
+  baseURL: AUTH_SERVER_URL,
   timeout: 10000,
 });
 
