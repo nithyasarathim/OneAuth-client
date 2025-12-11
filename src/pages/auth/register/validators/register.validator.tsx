@@ -5,7 +5,8 @@ export const validateEmail = (email: string) => {
     toast.error("Email cannot be empty");
     return false;
   }
-  if (!/\S+@\S+\.\S+/.test(email)) {
+  const safeEmailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!safeEmailRegex.test(email)) {
     toast.error("Enter a valid email");
     return false;
   }
