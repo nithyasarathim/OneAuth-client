@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-const FinalStep = () => {
+const AccountCreationStep = () => {
   return (
     <div className="flex flex-col items-center justify-center py-12">
       <motion.div
@@ -38,4 +38,4 @@ const FinalStep = () => {
   );
 };
 
-export default FinalStep;
+export default AccountCreationStep;
