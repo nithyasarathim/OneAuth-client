@@ -8,8 +8,8 @@ interface ApiResponse {
 
 function handleApiError(error: unknown): ApiResponse {
   if (error instanceof AxiosError) {
-    const msg = error.response?.data?.message || "Request failed";
-    toast.error(msg);
+    const msg = error.response?.data?.message || "Failed to execute request";
+      toast.error(msg);
     return { success: false, message: msg };
   }
 

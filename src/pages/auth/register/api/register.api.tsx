@@ -40,7 +40,7 @@ export const verifyOTP = async (
 
 export const createAccount = async (
   email: string,
-  password: string
+  password: string 
 ): Promise<ApiResponse> => {
   try {
     const { data } = await api.post<ApiResponse>(

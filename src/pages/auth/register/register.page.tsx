@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import AuthLayout from "../auth.layout";
+import toast from "react-hot-toast";
 
 import StepIndicator from "./components/StepIndicator";
 import EmailStep from "./components/EmailVerificationStep";
@@ -13,6 +14,7 @@ import {
   validateOTP,
   validatePassword,
 } from "./validators/register.validator";
+
 import {
   sendEmailVerification,
   verifyOTP,
@@ -28,23 +30,54 @@ const RegisterPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const next = async () => {
-    if (step === 1 && !validateEmail(email))
-      return alert("Enter a valid email");
-    if (step === 2 && !validateOTP(otp)) return alert("Enter all 4 digits");
-    if (step === 3 && !validatePassword(password, confirmPassword))
-      return alert("Invalid password");
+
+
+    if (step === 1 && !validateEmail(email)) {
+      toast.error("Enter a valid email");
+      return;
+    }
+
+    if (step === 2 && !validateOTP(otp)) {
+      toast.error("Enter all 4 digits");
+      return;
+    }
+
+    if (step === 3 && !validatePassword(password, confirmPassword)) {
+      toast.error("Invalid password");  
+      return;
+    }
 
     setIsLoading(true);
 
-    if (step === 1) await sendEmailVerification(email);
-    if (step === 2) await verifyOTP(email, otp);
-    if (step === 3) await createAccount(email, password);
+    if (step === 1) {
+      const res = await sendEmailVerification(email);
+      if (!res.success) {
+        setIsLoading(false);
+        return;
+      }
+    }
+
+    if (step === 2) {
+      const res = await verifyOTP(email, otp);
+      if (!res.success) {
+        setIsLoading(false);
+        return;
+      }
+    }
+
+    if (step === 3) {
+      const res = await createAccount(email, password);
+      if (!res.success) {
+        setIsLoading(false);
+        return;
+      }
+    }
 
     if (step === 3) {
       setStep(4);
       await new Promise((r) => setTimeout(r, 2000));
       setIsLoading(false);
-      alert("Account created!");
+      toast.success("Account created!");
       return;
     }
 
