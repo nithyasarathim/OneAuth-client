@@ -8,10 +8,10 @@ interface AuthLayoutProps {
 
 const AuthLayout = ({ children }: AuthLayoutProps) => {
   return (
-    <div className="min-h-screen w-full flex justify-center items-center px-4 bg-gray-50">
+    <div className="min-h-screen w-full flex justify-center items-center px-4 bg-white">
       <motion.div
         layout
-        className="w-full max-w-md bg-white p-6 border rounded-sm border-gray-300 flex flex-col items-center gap-4"
+        className="w-full max-w-md bg-white p-6 border rounded-sm border-gray-300 flex shadow-2xl flex-col items-center gap-4"
       >
         <UserLock className="text-sky-500" size={60} />
         <div className="flex items-center gap-2 text-3xl font-bold">

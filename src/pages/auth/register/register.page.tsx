@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import AuthLayout from "../auth.layout";
-import toast from "react-hot-toast";
 
 import StepIndicator from "./components/StepIndicator";
 import EmailStep from "./components/EmailVerificationStep";
@@ -30,6 +29,7 @@ const RegisterPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const next = async () => {
+    if (isLoading) return;
     setIsLoading(true);
 
     if (step === 1 && !validateEmail(email)) { setIsLoading(false); return; }
