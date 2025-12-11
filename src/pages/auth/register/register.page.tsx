@@ -41,7 +41,7 @@ const RegisterPage = () => {
     if (step === 2) res = await verifyOTP(email, otp);
     if (step === 3) res = await createAccount(email, password);
 
-    if (!res.success) {
+    if (!res!.success) {
       setIsLoading(false);
       return;
     }
@@ -50,7 +50,6 @@ const RegisterPage = () => {
       setStep(4);
       await new Promise((r) => setTimeout(r, 2000));
       setIsLoading(false);
-      toast.success("Account created!");
       return;
     }
 
