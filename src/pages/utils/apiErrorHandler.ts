@@ -6,7 +6,7 @@ interface ApiResponse {
   message?: string;
 }
 
-export function handleApiError(error: unknown): ApiResponse {
+function handleApiError(error: unknown): ApiResponse {
   if (error instanceof AxiosError) {
     const msg = error.response?.data?.message || "Request failed";
     toast.error(msg);
@@ -21,3 +21,5 @@ export function handleApiError(error: unknown): ApiResponse {
   toast.error("Something went wrong");
   return { success: false, message: "Something went wrong" };
 }
+
+export default handleApiError;
