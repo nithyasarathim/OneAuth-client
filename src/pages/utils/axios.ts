@@ -5,6 +5,7 @@ import { TIMEOUT } from './env.ts';
 const api = axios.create({
   baseURL: AUTH_SERVER_URL,
   timeout: TIMEOUT,
+  withCredentials:true
 });
 
 export default api;

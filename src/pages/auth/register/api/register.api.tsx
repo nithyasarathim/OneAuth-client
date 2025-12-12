@@ -27,10 +27,10 @@ export const verifyOTP = async (
   otp: string
 ): Promise<ApiResponse> => {
   try {
-    const { data } = await api.post<ApiResponse>(
-      "/auth/register/verify-otp",
-      { email, otp }
-    );
+    const { data } = await api.post<ApiResponse>("/auth/register/verify-otp", {
+      email,
+      otp,
+    });
     if (!data.success) toast.error(data.message || "Invalid OTP");
     return data;
   } catch (error) {
@@ -40,7 +40,7 @@ export const verifyOTP = async (
 
 export const createAccount = async (
   email: string,
-  password: string 
+  password: string
 ): Promise<ApiResponse> => {
   try {
     const { data } = await api.post<ApiResponse>(
