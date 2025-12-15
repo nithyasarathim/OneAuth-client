@@ -1,4 +1,4 @@
-export interface LogInState{
-    email: string,
-    password:string
+export interface LogInState {
+  email: string;
+  password: string;
 }
