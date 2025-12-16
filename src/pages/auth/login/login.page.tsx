@@ -1,29 +1,56 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
 import AuthLayout from "../auth.layout";
-import LoginInput from "./components/loginInput";
+import LoginInput from "./components/LoginInput";
 import { validateEmail, validatePassword } from "./validators/login.validator";
 import { loginUser } from "./api/login.api";
-import { useNavigate } from "react-router-dom";
+import LoginSuccess from "./components/LoginSuccess";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isLoading) return;
 
     if (!validateEmail(email)) return;
-    if (!validatePassword(password)) return;
+    if (!validatePassword(password))  return;
 
-    setIsLoading(true);
-    const res = await loginUser(email, password);
-    setIsLoading(false);
+    try {
+      setIsLoading(true);
+      const res = await loginUser(email, password);
 
-    if (!res.success) return;
+      if (!res.success) {
+        return;
+      }
+
+      toast.success("Login successful");
+      setIsSuccess(true);
+
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
+    } catch (err: unknown) {
+      toast.error("Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  if (isSuccess) {
+    return (
+      <AuthLayout>
+        <LoginSuccess />
+      </AuthLayout>
+    );
+  }
 
   return (
     <AuthLayout>
@@ -56,11 +83,9 @@ const LoginPage = () => {
         Don't have an account?
         <span
           className="font-medium px-2 text-sky-600 cursor-pointer hover:underline"
-          onClick={() => {
-            navigate("/auth/register");
-          }}
+          onClick={() => navigate("/auth/register")}
         >
-          Create One !
+          Create One!
         </span>
       </p>
     </AuthLayout>
