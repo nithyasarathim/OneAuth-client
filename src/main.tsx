@@ -4,7 +4,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import GlobalApiWatcher from "./pages/GlobalAPIWatcher.tsx";
+import GlobalApiWatcher from "./pages/globalComponents/GlobalAPIWatcher.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

@@ -12,7 +12,7 @@ export const loginUser = async (
   password: string
 ): Promise<ApiResponse> => {
   try {
-    const { data } = await api.post<ApiResponse>("/auth/login", {
+    const { data } = await api.post<ApiResponse>("/auth/session/login", {
       email,
       password,
     });
