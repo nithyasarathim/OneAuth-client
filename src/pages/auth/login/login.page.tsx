@@ -20,26 +20,27 @@ const LoginPage = () => {
     e.preventDefault();
     if (isLoading) return;
 
-    if (!validateEmail(email)) return;
-    if (!validatePassword(password))  return;
+    if (!validateEmail(email) || !validatePassword(password)) {
+      return;
+    }
+
+    setIsLoading(true);
 
     try {
-      setIsLoading(true);
       const res = await loginUser(email, password);
 
       if (!res.success) {
+        setIsLoading(false);
         return;
       }
 
-      toast.success("Login successful");
       setIsSuccess(true);
 
       setTimeout(() => {
         navigate("/");
-      }, 1500);
-    } catch (err: unknown) {
-      toast.error("Something went wrong");
-    } finally {
+      }, 1200);
+    } catch {
+      toast.error("Login failed. Try again.");
       setIsLoading(false);
     }
   };
