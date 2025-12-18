@@ -1,20 +1,40 @@
-import { Github, Linkedin } from "lucide-react";
+import { Github, Linkedin, Camera } from "lucide-react";
+import { motion } from "framer-motion";
 
 const ProfileCard = () => {
   return (
-    <section className="max-w-5xl mx-auto px-4 space-y-4 text-center">
-      <img
-        src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=400&auto=format&fit=crop"
-        alt="Profile"
-        className="w-32 h-32 mx-auto rounded-full object-cover shadow-sm"
-      />
+    <motion.section
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
+      className="max-w-5xl mx-auto px-4 space-y-4 text-center"
+    >
+      <div className="relative w-fit mx-auto">
+        <motion.img
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.25 }}
+          src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=400&auto=format&fit=crop"
+          alt="Profile"
+          className="w-50 h-50 rounded-full object-cover shadow-sm border-2 p-1 border-sky-500"
+        />
+
+        <button
+          className="absolute bottom-4 right-4 flex items-center justify-center border border-sky-300 rounded-full bg-white p-2 text-sky-500 shadow-xs hover:shadow-md duration-100"
+          aria-label="Update profile image"
+        >
+          <Camera size={16} />
+        </button>
+      </div>
 
       <div className="space-y-2">
         <h1 className="text-2xl font-semibold text-gray-900">john.doe</h1>
         <p className="text-sm text-gray-500">Engineering Department</p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-2">
-          <span className="text-sm text-gray-600">john.doe@company.com</span>
+          <span className="text-sm text-gray-600">
+            john.doe@company.com
+          </span>
           <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
             Available
           </span>
@@ -30,7 +50,9 @@ const ProfileCard = () => {
       </div>
 
       <section className="bg-white/60 rounded-2xl px-6 py-3 text-left">
-        <h2 className="text-lg font-semibold text-gray-900 mb-3">About</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-3">
+          About
+        </h2>
         <p className="leading-relaxed text-gray-600">
           Full-stack engineer focused on building scalable web platforms and
           shared identity systems. Experienced with modern JavaScript
@@ -54,7 +76,6 @@ const ProfileCard = () => {
             "Tailwind CSS",
             "Docker",
             "CI/CD",
-            
           ].map((skill) => (
             <span
               key={skill}
@@ -65,7 +86,7 @@ const ProfileCard = () => {
           ))}
         </div>
       </section>
-    </section>
+    </motion.section>
   );
 };
 
