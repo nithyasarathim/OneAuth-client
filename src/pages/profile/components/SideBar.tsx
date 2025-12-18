@@ -5,7 +5,7 @@ type SidebarProps = {
   setActiveTab: (tab: "profile" | "settings") => void;
 };
 
-export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
+const Sidebar = ({ activeTab, setActiveTab }: SidebarProps) => {
   return (
     <aside className="w-64 px-4 py-6 h-[550px] flex flex-col justify-between">
       <div className="space-y-1">
@@ -29,9 +29,11 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
       </button>
     </aside>
   );
-}
+};
 
-function SidebarItem({
+export default Sidebar;
+
+const SidebarItem = ({
   label,
   icon: Icon,
   active,
@@ -41,7 +43,7 @@ function SidebarItem({
   icon: React.ElementType;
   active: boolean;
   onClick: () => void;
-}) {
+}) => {
   return (
     <button
       onClick={onClick}
@@ -55,4 +57,4 @@ function SidebarItem({
       {label}
     </button>
   );
-}
+};
