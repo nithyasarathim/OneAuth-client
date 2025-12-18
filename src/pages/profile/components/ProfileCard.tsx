@@ -75,13 +75,12 @@ const ProfileCard = () => {
   );
 };
 
-export default ProfileCard;
 
 const IconButton = ({
-  icon: Icon,
-  label,
+    icon: Icon,
+    label,
 }: {
-  icon: React.ElementType;
+    icon: React.ElementType;
   label: string;
 }) => {
   return (
@@ -95,3 +94,5 @@ const IconButton = ({
     </div>
   );
 };
+
+export default ProfileCard;

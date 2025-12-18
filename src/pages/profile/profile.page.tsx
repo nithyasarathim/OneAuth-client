@@ -1,33 +1,30 @@
-import { useNavigate } from "react-router-dom";
-import api from "../utils/axios";
+import { useState } from "react";
+import Sidebar from "./components/SideBar";
+import ProfileCard from "./components/ProfileCard";
+import AccountSettings from "./components/AccountSettings";
 
 const ProfilePage = () => {
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    try {
-      await api.post("/auth/session/logout");
-      navigate("/auth/login", { replace: true });
-    } catch (err) {
-      navigate("/auth/login", { replace: true });
-    }
-  };
+  const [activeTab, setActiveTab] = useState<"profile" | "settings">("profile");
 
   return (
-    <div>
-      <header className="flex justify-between items-center px-4 py-3 border-b">
-        <h1 className="text-lg font-semibold">Profile</h1>
+    <div className="min-h-screen flex justify-center py-4">
+      <div className="w-full max-w-6xl rounded-3xl">
+        <div className="px-8 py-4">
+          <div className="flex gap-2 text-2xl font-bold">
+            <span className="text-sky-500">ONE</span>
+            <span className="text-gray-900">Account</span>
+          </div>
+        </div>
 
-        <button
-          onClick={handleLogout}
-          className="px-4 py-2 text-sm bg-red-500 text-white rounded hover:bg-red-600"
-        >
-          Logout
-        </button>
-      </header>
-      <main className="p-4">
-        <div>Hello world!</div>
-      </main>
+        <div className="flex min-h-[550px]">
+          <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+
+          <main className="flex-1 p-8 overflow-y-auto">
+            {activeTab === "profile" && <ProfileCard />}
+            {activeTab === "settings" && <AccountSettings />}
+          </main>
+        </div>
+      </div>
     </div>
   );
 };

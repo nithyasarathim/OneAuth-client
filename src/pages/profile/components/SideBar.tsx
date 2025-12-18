@@ -31,30 +31,31 @@ const Sidebar = ({ activeTab, setActiveTab }: SidebarProps) => {
   );
 };
 
-export default Sidebar;
 
 const SidebarItem = ({
-  label,
-  icon: Icon,
-  active,
-  onClick,
+    label,
+    icon: Icon,
+    active,
+    onClick,
 }: {
-  label: string;
-  icon: React.ElementType;
+    label: string;
+    icon: React.ElementType;
   active: boolean;
   onClick: () => void;
 }) => {
   return (
-    <button
+      <button
       onClick={onClick}
       className={`w-full text-left px-4 py-2 rounded-xl transition font-medium flex items-center gap-2 ${
-        active
+          active
           ? "bg-sky-100 text-sky-700"
           : "text-gray-600 hover:bg-gray-200"
-      }`}
-    >
+        }`}
+        >
       <Icon size={16} />
       {label}
     </button>
   );
 };
+
+export default Sidebar;
