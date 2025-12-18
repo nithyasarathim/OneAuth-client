@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import AuthLayout from "../auth.layout";
@@ -10,6 +10,9 @@ import LoginSuccess from "./components/LoginSuccess";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const redirectPath = location.pathname.replace(/^\/auth\/login/, "") || "/";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,9 +23,7 @@ const LoginPage = () => {
     e.preventDefault();
     if (isLoading) return;
 
-    if (!validateEmail(email) || !validatePassword(password)) {
-      return;
-    }
+    if (!validateEmail(email) || !validatePassword(password)) return;
 
     setIsLoading(true);
 
@@ -37,7 +38,7 @@ const LoginPage = () => {
       setIsSuccess(true);
 
       setTimeout(() => {
-        navigate("/");
+        navigate(redirectPath);
       }, 1200);
     } catch {
       toast.error("Login failed. Try again.");
@@ -59,7 +60,7 @@ const LoginPage = () => {
         Log in to your account
       </p>
 
-      <form onSubmit={handleSubmit} className="px-6 space-y-7">
+      <form onSubmit={handleSubmit} className="px-6 space-y-7 rounded-xl">
         <LoginInput
           email={email}
           password={password}
@@ -70,7 +71,7 @@ const LoginPage = () => {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full py-2 font-semibold text-white bg-sky-500 hover:bg-sky-600 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center gap-2"
+          className="w-full py-2 font-semibold text-white bg-sky-500 hover:bg-sky-600 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center gap-2"
         >
           {!isLoading ? (
             "Log In"
@@ -84,7 +85,7 @@ const LoginPage = () => {
         Don't have an account?
         <span
           className="font-medium px-2 text-sky-600 cursor-pointer hover:underline"
-          onClick={() => navigate("/auth/register")}
+          onClick={() => navigate(`/auth/register${redirectPath}`)}
         >
           Create One!
         </span>

@@ -1,32 +1,34 @@
 import { Routes, Route } from "react-router-dom";
 
-import RegisterPage from "./pages/auth/register/register.page.tsx";
-import GuestRoute from "./pages/globalComponents/GuestRoute.tsx";
-import LoginPage from "./pages/auth/login/login.page.tsx";
-import ProfilePage from "./pages/profile/profile.page.tsx";
-import ProtectedRoute from "./pages/globalComponents/ProtectedRoute.tsx";
+import RegisterPage from "./pages/auth/register/register.page";
+import GuestRoute from "./pages/globalComponents/GuestRoute";
+import LoginPage from "./pages/auth/login/login.page";
+import ProfilePage from "./pages/profile/profile.page";
+import ProtectedRoute from "./pages/globalComponents/ProtectedRoute";
 
 const App = () => {
   return (
     <Routes>
       <Route
-        path="/auth/register"
+        path="/auth/register/*"
         element={
           <GuestRoute>
             <RegisterPage />
           </GuestRoute>
         }
       />
+
       <Route
-        path="/auth/login"
+        path="/auth/login/*"
         element={
           <GuestRoute>
             <LoginPage />
           </GuestRoute>
         }
       />
+
       <Route
-        path="/"
+        path="/*"
         element={
           <ProtectedRoute>
             <ProfilePage />

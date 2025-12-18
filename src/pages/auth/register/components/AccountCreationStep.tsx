@@ -1,6 +1,22 @@
 import { motion } from "framer-motion";
+import { useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const AccountCreationStep = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const redirectPath =
+    location.pathname.replace(/^\/auth\/register/, "") || "/";
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      navigate(redirectPath);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [navigate, redirectPath]);
+
   return (
     <div className="flex flex-col items-center justify-center py-12">
       <motion.div
@@ -29,10 +45,10 @@ const AccountCreationStep = () => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.9 }}
-        className="text-lg font-semibold text-gray-700 mt-6"
+        className="text-lg font-semibold text-gray-700 mt-6 text-center"
       >
         Account Created Successfully!
-        <p className="text-sm text-center mt-5">Go to dashboard</p>
+        <p className="text-sm text-center mt-5">Redirecting...</p>
       </motion.p>
     </div>
   );

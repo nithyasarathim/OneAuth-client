@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import type { EmailVerificationProps } from "../types/register.types";
 
 const smooth = {
@@ -11,6 +11,10 @@ const smooth = {
 
 const EmailStep = ({ email, setEmail }: EmailVerificationProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const redirectPath =
+    location.pathname.replace(/^\/auth\/register/, "") || "/";
 
   return (
     <motion.div key="email" {...smooth} className="space-y-5">
@@ -27,7 +31,7 @@ const EmailStep = ({ email, setEmail }: EmailVerificationProps) => {
         Already have an account?
         <button
           type="button"
-          onClick={() => navigate("/auth/login")}
+          onClick={() => navigate(`/auth/login${redirectPath}`)}
           className="ml-2 font-medium text-sky-600 hover:underline cursor-pointer"
         >
           Log In
