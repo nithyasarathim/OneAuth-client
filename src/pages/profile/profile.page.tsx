@@ -65,7 +65,11 @@ const ProfilePage = () => {
               ))}
 
             {activeTab === "settings" &&
-              (loading ? <ProfileCardShimmer /> : <AccountSettings />)}
+              (loading || !user ? (
+                <ProfileCardShimmer />
+              ) : (
+                <AccountSettings user={user} />
+              ))}
           </div>
         </main>
       </div>
