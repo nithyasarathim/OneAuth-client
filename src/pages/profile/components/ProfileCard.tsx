@@ -1,7 +1,29 @@
-import { Github, Linkedin, Camera } from "lucide-react";
+import { Github, Linkedin, Camera, User, Pencil } from "lucide-react";
 import { motion } from "framer-motion";
+import type { UserInterface } from "../types/user.types";
 
-const ProfileCard = () => {
+type ProfileCardProps = {
+  user: UserInterface["user"];
+  switchToSettings?: () => void;
+};
+
+const ProfileCard = ({ user, switchToSettings }: ProfileCardProps) => {
+  const hasProfilePicture = !!user.profilePicture;
+  const displayUsername = user.username || "Username not set";
+  const displayEmail = user.email || "Email not available";
+  const displayDepartment = user.department || "Department not specified";
+  const statusAvailable =
+    typeof user.isAvailable === "boolean"
+      ? user.isAvailable
+        ? "Available"
+        : "Unavailable"
+      : "Status unknown";
+  const skills =
+    user.skills && user.skills.length > 0 ? user.skills : ["Not specified"];
+  const description =
+    user.description ||
+    "No description added yet. Tell others about your role, experience, and interests.";
+
   return (
     <motion.section
       initial={{ opacity: 0 }}
@@ -10,17 +32,23 @@ const ProfileCard = () => {
       className="max-w-5xl mx-auto px-4 space-y-4 text-center"
     >
       <div className="relative w-fit mx-auto">
-        <motion.img
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.25 }}
-          src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=400&auto=format&fit=crop"
-          alt="Profile"
-          className="w-50 h-50 rounded-full object-cover shadow-sm border-2 p-1 border-sky-500"
-        />
+        {hasProfilePicture ? (
+          <motion.img
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.25 }}
+            src={user.profilePicture}
+            alt="Profile"
+            className="w-48 h-48 rounded-full object-cover shadow-sm border-2 p-1 border-sky-500"
+          />
+        ) : (
+          <div className="w-48 h-48 rounded-full border-2 p-1 border-dashed border-gray-300 flex items-center justify-center bg-gray-50">
+            <User className="w-24 h-24 text-gray-400" />
+          </div>
+        )}
 
         <button
-          className="absolute bottom-4 right-4 flex items-center justify-center border border-sky-300 rounded-full bg-white p-2 text-sky-500 shadow-xs hover:shadow-md duration-100"
+          className="absolute bottom-4 right-4 flex items-center justify-center border rounded-full p-2 shadow-sm border-sky-300 bg-white text-sky-500 hover:shadow-md"
           aria-label="Update profile image"
         >
           <Camera size={16} />
@@ -28,58 +56,113 @@ const ProfileCard = () => {
       </div>
 
       <div className="space-y-2">
-        <h1 className="text-2xl font-semibold text-gray-900">john.doe</h1>
-        <p className="text-sm text-gray-500">Engineering Department</p>
-
+        <h1
+          className={`text-2xl font-semibold ${
+            user.username ? "text-gray-900" : "text-gray-400"
+          }`}
+        >
+          {displayUsername}
+        </h1>
+        <p
+          className={`text-sm ${
+            user.department ? "text-gray-500" : "text-gray-400"
+          }`}
+        >
+          {displayDepartment}
+        </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-2">
-          <span className="text-sm text-gray-600">
-            john.doe@company.com
+          <span
+            className={`text-sm ${
+              user.email ? "text-gray-600" : "text-gray-400"
+            }`}
+          >
+            {displayEmail}
           </span>
-          <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
-            Available
+          <span
+            className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${
+              typeof user.isAvailable === "boolean"
+                ? user.isAvailable
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-700"
+                : "bg-gray-100 text-gray-500"
+            }`}
+          >
+            {statusAvailable}
           </span>
         </div>
       </div>
 
       <div className="flex items-center justify-center gap-3">
-        <IconButton icon={Github} label="GitHub" />
-        <IconButton icon={Linkedin} label="LinkedIn" />
-        <button className="inline-flex items-center gap-2 rounded-xl bg-sky-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-sky-600 transition shadow-sm">
-          View Resume
+        <IconButton
+          icon={Github}
+          label={user.githubUrl ? "GitHub" : "No link"}
+          disabled={!user.githubUrl}
+        />
+        <IconButton
+          icon={Linkedin}
+          label={user.linkedinUrl ? "LinkedIn" : "No link"}
+          disabled={!user.linkedinUrl}
+        />
+
+        <button
+          disabled={!user.resumeUrl}
+          className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium transition shadow-sm ${
+            user.resumeUrl
+              ? "bg-sky-500 text-white hover:bg-sky-600"
+              : "bg-gray-200 text-gray-500 cursor-not-allowed"
+          }`}
+        >
+          {user.resumeUrl ? "View Resume" : "Resume not uploaded"}
         </button>
+
+        <div className="relative group">
+          <button
+            onClick={switchToSettings}
+            className="inline-flex items-center gap-1 rounded-full px-2 py-2 text-sm font-medium bg-white text-sky-500 hover:bg-gray-50 shadow transition"
+            aria-label="Update profile"
+          >
+            <Pencil size={18} />
+          </button>
+          <span className="pointer-events-none absolute left-full top-1/2 ml-2 -translate-y-1/2 whitespace-nowrap rounded-md bg-gray-600 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition">
+            Update profile
+          </span>
+        </div>
       </div>
 
       <section className="bg-white/60 rounded-2xl px-6 py-3 text-left">
-        <h2 className="text-lg font-semibold text-gray-900 mb-3">
+        <h2
+          className={`text-lg font-semibold mb-3 ${
+            user.description ? "text-gray-900" : "text-gray-400"
+          }`}
+        >
           About
         </h2>
-        <p className="leading-relaxed text-gray-600">
-          Full-stack engineer focused on building scalable web platforms and
-          shared identity systems. Experienced with modern JavaScript
-          frameworks, API design, and secure authentication flows.
+        <p
+          className={`leading-relaxed ${
+            user.description ? "text-gray-600" : "text-gray-400"
+          }`}
+        >
+          {description}
         </p>
       </section>
 
       <section className="bg-white rounded-2xl px-6 py-4">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4 text-left">
+        <h2
+          className={`text-lg font-semibold mb-4 text-left ${
+            skills[0] !== "Not specified" ? "text-gray-900" : "text-gray-400"
+          }`}
+        >
           Skills
         </h2>
-        <div className="flex flex-wrap justify-center gap-2">
-          {[
-            "React",
-            "Node.js",
-            "TypeScript",
-            "OAuth / SSO",
-            "PostgreSQL",
-            "REST APIs",
-            "GraphQL",
-            "Tailwind CSS",
-            "Docker",
-            "CI/CD",
-          ].map((skill) => (
+        <div className="flex flex-wrap justify-start gap-2">
+          {skills.map((skill, i) => (
             <span
-              key={skill}
-              className="rounded-full bg-sky-100 text-sky-700 text-sm px-3 py-1"
+              key={i}
+              className={`rounded-full px-3 py-1 text-sm ${
+                skill !== "Not specified"
+                  ? "bg-sky-100 text-sky-700"
+                  : "bg-gray-100 text-gray-400"
+              }`}
             >
               {skill}
             </span>
@@ -93,20 +176,27 @@ const ProfileCard = () => {
 const IconButton = ({
   icon: Icon,
   label,
+  disabled,
 }: {
   icon: React.ElementType;
   label: string;
-}) => {
-  return (
-    <div className="relative group">
-      <button className="inline-flex items-center justify-center rounded-xl bg-white/70 px-3 py-2 hover:bg-white transition shadow-sm">
-        <Icon size={18} />
-      </button>
-      <span className="absolute -bottom-7 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
-        {label}
-      </span>
-    </div>
-  );
-};
+  disabled?: boolean;
+}) => (
+  <div className="relative group">
+    <button
+      disabled={disabled}
+      className={`inline-flex items-center justify-center rounded-xl px-3 py-2 transition shadow-sm ${
+        disabled
+          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+          : "bg-white/70 hover:bg-white"
+      }`}
+    >
+      <Icon size={18} />
+    </button>
+    <span className="absolute -bottom-7 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+      {label}
+    </span>
+  </div>
+);
 
 export default ProfileCard;

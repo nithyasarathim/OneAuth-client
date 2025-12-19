@@ -1,12 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "./components/SideBar";
 import ProfileCard from "./components/ProfileCard";
 import AccountSettings from "./components/AccountSettings";
-
-type Tab = "profile" | "settings";
+import ProfileCardShimmer from "./shimmers/ProfileCardShimmer";
+import { getProfile } from "./api/profile.api";
+import type { UserInterface } from "./types/user.types";
+import type { Tab } from "./types/ui";
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState<Tab>("profile");
+  const [user, setUser] = useState<UserInterface["user"] | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setLoading(true);
+        const response = await getProfile();
+        if (response?.data?.success && response.data.user) {
+          setUser(response.data.user);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  const switchToSettings = () => setActiveTab("settings");
 
   return (
     <div className="min-h-screen flex justify-center mt-2">
@@ -23,11 +44,7 @@ const ProfilePage = () => {
 
         <aside
           className="fixed z-20 bg-white mt-2"
-          style={{
-            top: 64,
-            width: 256,
-            height: "calc(100vh - 64px)",
-          }}
+          style={{ top: 64, width: 256, height: "calc(100vh - 64px)" }}
         >
           <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
         </aside>
@@ -40,8 +57,15 @@ const ProfilePage = () => {
           }}
         >
           <div className="h-[90%] overflow-y-auto scrollbar-hide">
-            {activeTab === "profile" && <ProfileCard />}
-            {activeTab === "settings" && <AccountSettings />}
+            {activeTab === "profile" &&
+              (loading || !user ? (
+                <ProfileCardShimmer />
+              ) : (
+                <ProfileCard user={user} switchToSettings={switchToSettings} />
+              ))}
+
+            {activeTab === "settings" &&
+              (loading ? <ProfileCardShimmer /> : <AccountSettings />)}
           </div>
         </main>
       </div>
