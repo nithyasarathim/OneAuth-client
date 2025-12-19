@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Select from "react-select";
 import { Github, Linkedin } from "lucide-react";
+import { motion } from "framer-motion";
 
 import type { UserInterface } from "../types/profile.types";
 import type { ProfileFormState } from "../types/profile.types";
@@ -56,7 +57,7 @@ const AccountSettings = ({
     }));
   };
 
-  const isChanged = useMemo(() => {
+  const isChanged = () => {
     if (!user) return false;
 
     const keys: (keyof ProfileFormState)[] = [
@@ -79,7 +80,7 @@ const AccountSettings = ({
       return true;
 
     return false;
-  }, [form, user]);
+  };
 
   const handleSave = () => {
     if (validateProfile(form)) {
@@ -88,8 +89,13 @@ const AccountSettings = ({
   };
 
   return (
-    <section className="max-w-6xl mx-auto px-6 py-14">
-      <div className="rounded-3xl bg-white/80 backdrop-blur border border-gray-200 shadow-xl shadow-gray-100 p-10 space-y-4">
+    <motion.section
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
+      className="max-w-6xl mx-auto px-6 py-14"
+    >
+      <div className="rounded-3xl bg-white/80 backdrop-blur space-y-4">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-semibold text-gray-900">
             Account Settings
@@ -216,16 +222,18 @@ const AccountSettings = ({
 
           <button
             onClick={handleSave}
-            disabled={!isChanged}
+            disabled={!isChanged()}
             className={`px-8 py-2 rounded-xl text-white font-medium bg-sky-500 ${
-              !isChanged ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
+              !isChanged()
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:opacity-90"
             } transition`}
           >
             Update Profile
           </button>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 };
 
