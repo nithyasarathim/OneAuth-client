@@ -16,12 +16,8 @@ export interface UserInterface {
 }
 
 export type ProfileFormState = Pick<
-  User,
-  | "username"
-  | "department"
-  | "githubUrl"
-  | "linkedinUrl"
-  | "description"
-  | "skills"
-  | "isAvailable"
+  UserInterface,
+  "username" | "department" | "githubUrl" | "linkedinUrl" | "description" | "skills" | "isAvailable"
 >;
+
+export type Tab = "profile" | "settings";

@@ -4,21 +4,20 @@ import ProfileCard from "./components/ProfileCard";
 import AccountSettings from "./components/AccountSettings";
 import ProfileCardShimmer from "./shimmers/ProfileCardShimmer";
 import { getProfile } from "./api/profile.api";
-import type { UserInterface } from "./types/user.types";
-import type { Tab } from "./types/ui";
+import type { UserInterface, Tab, ProfileFormState } from "./types/profile.types";
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState<Tab>("profile");
-  const [user, setUser] = useState<UserInterface["user"] | null>(null);
+  const [user, setUser] = useState<UserInterface | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProfile = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
-        const response = await getProfile();
-        if (response?.data?.success && response.data.user) {
-          setUser(response.data.user);
+        const res = await getProfile();
+        if (res?.data?.success && res.data.user) {
+          setUser(res.data.user);
         }
       } finally {
         setLoading(false);
@@ -27,13 +26,22 @@ const ProfilePage = () => {
     fetchProfile();
   }, []);
 
-  const switchToSettings = () => setActiveTab("settings");
+  const handleProfileUpdate = (updated: ProfileFormState) => {
+    setUser((prev) =>
+      prev
+        ? {
+            ...prev,
+            ...updated,
+          }
+        : prev
+    );
+  };
 
   return (
     <div className="min-h-screen flex justify-center mt-2">
       <div className="relative w-[70%]">
         <header
-          className="fixed top-0 z-30 flex items-center px-8 mt-2 cursor-pointer select-none"
+          className="fixed top-0 z-30 flex items-center px-8 mt-2"
           style={{ height: 64, width: "70%" }}
         >
           <div className="flex gap-2 text-2xl font-bold">
@@ -57,19 +65,16 @@ const ProfilePage = () => {
           }}
         >
           <div className="h-[90%] overflow-y-auto scrollbar-hide">
-            {activeTab === "profile" &&
-              (loading || !user ? (
-                <ProfileCardShimmer />
-              ) : (
-                <ProfileCard user={user} switchToSettings={switchToSettings} />
-              ))}
-
-            {activeTab === "settings" &&
-              (loading || !user ? (
-                <ProfileCardShimmer />
-              ) : (
-                <AccountSettings user={user} />
-              ))}
+            {loading || !user ? (
+              <ProfileCardShimmer />
+            ) : activeTab === "profile" ? (
+              <ProfileCard
+                user={user}
+                switchToSettings={() => setActiveTab("settings")}
+              />
+            ) : (
+              <AccountSettings user={user} onSaveProfile={handleProfileUpdate} />
+            )}
           </div>
         </main>
       </div>
