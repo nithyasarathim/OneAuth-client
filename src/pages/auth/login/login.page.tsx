@@ -83,12 +83,13 @@ const LoginPage = () => {
 
       <p className="text-center mt-6 text-sm text-gray-600">
         Don't have an account?
-        <span
-          className="font-medium px-2 text-sky-600 cursor-pointer hover:underline"
+        <button
+          type="button"
           onClick={() => navigate(`/auth/register${redirectPath}`)}
+          className="font-medium px-2 text-sky-600 hover:underline bg-transparent"
         >
           Create One!
-        </span>
+        </button>
       </p>
     </AuthLayout>
   );
