@@ -1,17 +1,16 @@
-import { useEffect, useState } from "react";
-import Select, { MultiValue } from "react-select";
+import { useState } from "react";
+import Select from "react-select";
 import { Github, Linkedin } from "lucide-react";
 import { motion } from "framer-motion";
 
 import type { UserInterface, ProfileFormState } from "../types/profile.types";
 import departments from "../constants/departments";
 import { skillsOptions } from "../constants/skills";
-import { updateProfile } from "../api/profile.api";
-import { validateProfile } from "../validators/profile.validate";
 
 import Field from "./fields/Field";
 import IconInput from "./fields/IconInput";
 import ResumeUpload from "./fields/ResumeUpload";
+import { useAccountSettingsForm } from "../hooks/useAccountSettingsForm";
 
 type Props = {
   user: UserInterface;
@@ -19,77 +18,18 @@ type Props = {
 };
 
 const AccountSettings = ({ user, onSaveProfile }: Props) => {
-  const [form, setForm] = useState<ProfileFormState>({
-    username: "",
-    department: "",
-    githubUrl: "",
-    linkedinUrl: "",
-    description: "",
-    skills: [],
-    isAvailable: false,
-  });
-
   const [resume, setResume] = useState<File | null>(null);
-  const [cooldown, setCooldown] = useState(false);
 
-  useEffect(() => {
-    setForm({
-      username: user.username ?? "",
-      department: user.department ?? "",
-      githubUrl: user.githubUrl ?? "",
-      linkedinUrl: user.linkedinUrl ?? "",
-      description: user.description ?? "",
-      skills: user.skills ?? [],
-      isAvailable: user.isAvailable ?? false,
-    });
-  }, [user]);
-
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value } = e.target;
-    if (name === "username" && value.length > 25) return;
-    if (name === "description" && value.length > 500) return;
-    setForm((p) => ({ ...p, [name]: value }));
-  };
-
-  const handleSkillsChange = (
-    selected: MultiValue<{ label: string; value: string }>
-  ) => {
-    setForm((p) => ({
-      ...p,
-      skills: selected.map((s) => s.value),
-    }));
-  };
-
-  const isChanged =
-    JSON.stringify(form) !==
-    JSON.stringify({
-      username: user.username ?? "",
-      department: user.department ?? "",
-      githubUrl: user.githubUrl ?? "",
-      linkedinUrl: user.linkedinUrl ?? "",
-      description: user.description ?? "",
-      skills: user.skills ?? [],
-      isAvailable: user.isAvailable ?? false,
-    });
-
-  const handleSave = async () => {
-    if (cooldown) return;
-    if (!validateProfile(form, user)) return;
-
-    setCooldown(true);
-    try {
-      const res = await updateProfile(form);
-      if (res?.success) {
-        onSaveProfile(form);
-      }
-    } finally {
-      setTimeout(() => setCooldown(false), 2000);
-    }
-  };
+  const {
+    form,
+    setForm,
+    cooldown,
+    isChanged,
+    handleChange,
+    handleSkillsChange,
+    reset,
+    save,
+  } = useAccountSettingsForm(user, onSaveProfile);
 
   return (
     <motion.section
@@ -194,24 +134,14 @@ const AccountSettings = ({ user, onSaveProfile }: Props) => {
 
         <div className="flex justify-end gap-4">
           <button
-            onClick={() =>
-              setForm({
-                username: user.username ?? "",
-                department: user.department ?? "",
-                githubUrl: user.githubUrl ?? "",
-                linkedinUrl: user.linkedinUrl ?? "",
-                description: user.description ?? "",
-                skills: user.skills ?? [],
-                isAvailable: user.isAvailable ?? false,
-              })
-            }
+            onClick={reset}
             className="px-6 py-2 border rounded-xl"
           >
             Undo
           </button>
 
           <button
-            onClick={handleSave}
+            onClick={save}
             disabled={!isChanged || cooldown}
             className={`px-8 py-2 rounded-xl text-white ${
               !isChanged || cooldown
