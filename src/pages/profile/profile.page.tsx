@@ -4,7 +4,11 @@ import ProfileCard from "./components/ProfileCard";
 import AccountSettings from "./components/AccountSettings";
 import ProfileCardShimmer from "./shimmers/ProfileCardShimmer";
 import { getProfile } from "./api/profile.api";
-import type { UserInterface, Tab, ProfileFormState } from "./types/profile.types";
+import type {
+  UserInterface,
+  Tab,
+  ProfileFormState,
+} from "./types/profile.types";
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState<Tab>("profile");
@@ -32,6 +36,17 @@ const ProfilePage = () => {
         ? {
             ...prev,
             ...updated,
+          }
+        : prev
+    );
+  };
+
+  const handleAvatarUpdate = (url: string) => {
+    setUser((prev) =>
+      prev
+        ? {
+            ...prev,
+            profileUrl: url,
           }
         : prev
     );
@@ -71,9 +86,13 @@ const ProfilePage = () => {
               <ProfileCard
                 user={user}
                 switchToSettings={() => setActiveTab("settings")}
+                onAvatarUpdate={handleAvatarUpdate}
               />
             ) : (
-              <AccountSettings user={user} onSaveProfile={handleProfileUpdate} />
+              <AccountSettings
+                user={user}
+                onSaveProfile={handleProfileUpdate}
+              />
             )}
           </div>
         </main>

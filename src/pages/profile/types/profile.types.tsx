@@ -4,7 +4,7 @@ export interface UserInterface {
   username: string;
   department: string | null;
   role: string;
-  profilePicture: string;
+  profileUrl: string;
   skills: string[];
   linkedinUrl: string;
   githubUrl: string;
@@ -17,7 +17,13 @@ export interface UserInterface {
 
 export type ProfileFormState = Pick<
   UserInterface,
-  "username" | "department" | "githubUrl" | "linkedinUrl" | "description" | "skills" | "isAvailable"
+  | "username"
+  | "department"
+  | "githubUrl"
+  | "linkedinUrl"
+  | "description"
+  | "skills"
+  | "isAvailable"
 >;
 
 export type Tab = "profile" | "settings";

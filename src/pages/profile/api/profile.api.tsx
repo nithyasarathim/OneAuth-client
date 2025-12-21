@@ -18,18 +18,15 @@ const getProfile = async () => {
 const updateProfile = async (updatedUser: ProfileFormState) => {
   try {
     const response = await api.patch("/users/me", updatedUser);
-    if (!response?.data?.success) {
+    if (!response?.data?.success || !response.data.user) {
       toast.error("Failed to update profile");
       return null;
     }
     toast.success("Profile updated successfully");
-    return response.data;
+    return response.data.user;
   } catch (err) {
     return handleApiError(err);
   }
 };
 
-export {
-    getProfile,
-    updateProfile
-}
+export { getProfile, updateProfile };

@@ -21,7 +21,7 @@ const ResumeUpload = ({
       ) : (
         <>
           <Upload className="text-sky-500" />
-          <span className="text-sm text-gray-500">Click to upload resume</span>
+          <span className="text-sm text-gray-500">Upload resume</span>
         </>
       )}
       <input

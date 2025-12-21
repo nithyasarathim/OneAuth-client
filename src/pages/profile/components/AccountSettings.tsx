@@ -1,35 +1,96 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Select from "react-select";
 import { Github, Linkedin } from "lucide-react";
 import { motion } from "framer-motion";
 
 import type { UserInterface, ProfileFormState } from "../types/profile.types";
+import type { MultiValue } from "react-select";
 import departments from "../constants/departments";
 import { skillsOptions } from "../constants/skills";
+import { updateProfile } from "../api/profile.api";
+import { validateProfile } from "../validators/profile.validate";
 
 import Field from "./fields/Field";
 import IconInput from "./fields/IconInput";
 import ResumeUpload from "./fields/ResumeUpload";
-import { useAccountSettingsForm } from "../hooks/useAccountSettingsForm";
 
 type Props = {
   user: UserInterface;
-  onSaveProfile: (updated: ProfileFormState) => void;
+  onSaveProfile: (updated: UserInterface) => void;
 };
 
 const AccountSettings = ({ user, onSaveProfile }: Props) => {
-  const [resume, setResume] = useState<File | null>(null);
+  const [form, setForm] = useState<ProfileFormState>({
+    username: "",
+    department: "",
+    githubUrl: "",
+    linkedinUrl: "",
+    description: "",
+    skills: [],
+    isAvailable: false,
+  });
 
-  const {
-    form,
-    setForm,
-    cooldown,
-    isChanged,
-    handleChange,
-    handleSkillsChange,
-    reset,
-    save,
-  } = useAccountSettingsForm(user, onSaveProfile);
+  const [resume, setResume] = useState<File | null>(null);
+  const [cooldown, setCooldown] = useState(false);
+
+  useEffect(() => {
+    setForm({
+      username: user.username ?? "",
+      department: user.department ?? "",
+      githubUrl: user.githubUrl ?? "",
+      linkedinUrl: user.linkedinUrl ?? "",
+      description: user.description ?? "",
+      skills: user.skills ?? [],
+      isAvailable: user.isAvailable ?? false,
+    });
+  }, [user]);
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    if (name === "username" && value.length > 25) return;
+    if (name === "description" && value.length > 500) return;
+    setForm((p) => ({ ...p, [name]: value }));
+  };
+
+  const handleSkillsChange = (
+    selected: MultiValue<{ label: string; value: string }>
+  ) => {
+    setForm((p) => ({
+      ...p,
+      skills: selected.map((s) => s.value),
+    }));
+  };
+
+  const isChanged =
+    JSON.stringify(form) !==
+    JSON.stringify({
+      username: user.username ?? "",
+      department: user.department ?? "",
+      githubUrl: user.githubUrl ?? "",
+      linkedinUrl: user.linkedinUrl ?? "",
+      description: user.description ?? "",
+      skills: user.skills ?? [],
+      isAvailable: user.isAvailable ?? false,
+    });
+
+  const handleSave = async () => {
+    if (cooldown) return;
+    if (!validateProfile(form, user)) return;
+
+    setCooldown(true);
+    try {
+      const updatedUser = await updateProfile(form);
+      if (updatedUser) {
+        onSaveProfile(updatedUser);
+      }
+    } finally {
+      setTimeout(() => setCooldown(false), 2000);
+    }
+  };
 
   return (
     <motion.section
@@ -41,20 +102,32 @@ const AccountSettings = ({ user, onSaveProfile }: Props) => {
       <div className="rounded-3xl bg-white/80 backdrop-blur space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-semibold">Account Settings</h1>
-          <button
-            onClick={() =>
-              setForm((p) => ({ ...p, isAvailable: !p.isAvailable }))
-            }
-            className={`w-14 h-7 rounded-full relative ${
-              form.isAvailable ? "bg-sky-500" : "bg-gray-300"
-            }`}
-          >
+
+          <div className="flex items-center gap-3">
             <span
-              className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition ${
-                form.isAvailable ? "translate-x-7" : ""
+              className={`text-sm font-medium transition ${
+                form.isAvailable ? "text-sky-500" : "text-gray-500"
               }`}
-            />
-          </button>
+            >
+              {form.isAvailable
+                ? "Available for teams"
+                : "Unavailable for teams"}
+            </span>
+            <button
+              onClick={() =>
+                setForm((p) => ({ ...p, isAvailable: !p.isAvailable }))
+              }
+              className={`w-14 h-7 rounded-full relative transition ${
+                form.isAvailable ? "bg-sky-500" : "bg-gray-300"
+              }`}
+            >
+              <span
+                className={`absolute top-1 left-1 h-5 w-5 rounded-full bg-white transition-transform ${
+                  form.isAvailable ? "translate-x-7" : ""
+                }`}
+              />
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -134,14 +207,24 @@ const AccountSettings = ({ user, onSaveProfile }: Props) => {
 
         <div className="flex justify-end gap-4">
           <button
-            onClick={reset}
+            onClick={() =>
+              setForm({
+                username: user.username ?? "",
+                department: user.department ?? "",
+                githubUrl: user.githubUrl ?? "",
+                linkedinUrl: user.linkedinUrl ?? "",
+                description: user.description ?? "",
+                skills: user.skills ?? [],
+                isAvailable: user.isAvailable ?? false,
+              })
+            }
             className="px-6 py-2 border rounded-xl"
           >
             Undo
           </button>
 
           <button
-            onClick={save}
+            onClick={handleSave}
             disabled={!isChanged || cooldown}
             className={`px-8 py-2 rounded-xl text-white ${
               !isChanged || cooldown
