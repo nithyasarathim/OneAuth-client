@@ -1,12 +1,12 @@
 import { Github, Linkedin, Pencil } from "lucide-react";
-import type { UserInterface } from "../types/user.types";
+import type { UserInterface } from "../../types/profile.types";
 import IconButton from "./IconButton";
 
 const ProfileActions = ({
   user,
   switchToSettings,
 }: {
-  user: UserInterface["user"];
+  user: UserInterface;
   switchToSettings?: () => void;
 }) => {
   const openLink = (url?: string) => {

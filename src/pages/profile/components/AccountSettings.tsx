@@ -10,9 +10,10 @@ import { skillsOptions } from "../constants/skills";
 import { updateProfile } from "../api/profile.api";
 import { validateProfile } from "../validators/profile.validate";
 
-import Field from "./fields/Field";
-import IconInput from "./fields/IconInput";
-import ResumeUpload from "./fields/ResumeUpload";
+import Field from "./AccountSettings/Field";
+import IconInput from "./AccountSettings/IconInput";
+import ResumeUpload from "./AccountSettings/ResumeUpload";
+import ChangePassword from "./AccountSettings/ChangePassword";
 
 type Props = {
   user: UserInterface;
@@ -173,7 +174,7 @@ const AccountSettings = ({ user, onSaveProfile }: Props) => {
             <Field label="Department">
               <select
                 name="department"
-                value={form.department}
+                value={form.department!}
                 onChange={handleChange}
                 className="w-full rounded-xl border px-4 py-3"
               >
@@ -234,6 +235,9 @@ const AccountSettings = ({ user, onSaveProfile }: Props) => {
           >
             Update Profile
           </button>
+        </div>
+        <div className="w-[100%] items-center px-auto">
+          <ChangePassword/>
         </div>
       </div>
     </motion.section>
