@@ -29,33 +29,5 @@ const updateProfile = async (updatedUser: ProfileFormState) => {
   }
 };
 
-const verifyPassword = async (password: string) => {
-  try {
-    const response = await api.post("/users/verify-pwd", password);
-    if (!response?.data?.success) {
-      toast.error("Failed to verify password");
-      return null;
-    }
-    if (!response?.data?.verified) {
-      toast.error("Current password is wrong");
-      return null;
-    }
-  } catch (err) {
-    return handleApiError(err);
-  }
-};
 
-const changePassword = async (password: string) => {
-  try {
-    const response = await api.post("/users/change-pwd", password);
-    if (!response?.data?.success) {
-      toast.error("Failed to update the new password");
-      return null;
-    }
-    toast.success("Password has been updated successfully !");
-  } catch (err) {
-    return handleApiError(err);
-  }
-};
-
-export { getProfile, updateProfile, verifyPassword, changePassword };
+export { getProfile, updateProfile};

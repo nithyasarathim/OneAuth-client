@@ -6,7 +6,7 @@ import {
   validatePassword,
   getPasswordRuleStatus,
 } from "../../validators/password.validate";
-import { verifyPassword, changePassword } from "../../api/profile.api";
+import { verifyPassword, changePassword } from "../../api/password.api";
 import toast from "react-hot-toast";
 
 const fadeVariant = {
@@ -28,8 +28,12 @@ const ChangePassword = () => {
     if (!currentPassword) return;
     setLoading(true);
     try {
-      const verifiedResult = await verifyPassword(currentPassword);
-      if (verifiedResult !== null) setVerified(true);
+      const response = await verifyPassword(currentPassword);
+      if (response?.success) {
+        setVerified(true);
+      } else {
+        setVerified(false);
+      }
     } finally {
       setLoading(false);
     }
@@ -43,7 +47,8 @@ const ChangePassword = () => {
     if (!validatePassword(newPassword)) return;
 
     const result = await changePassword(newPassword);
-    if (result !== null) {
+    if (result?.success) {
+      toast.success("Password changed successfully!");
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
