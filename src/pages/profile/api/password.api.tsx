@@ -4,15 +4,18 @@ import toast from "react-hot-toast";
 
 const verifyPassword = async (password: string) => {
   try {
-    const response = await api.post("/password/verify", { password });
-    if (!response?.data?.success) {
-      toast.error("Failed to verify password");
+    const res = await api.post("/password/verify", { password });
+
+    if (!res?.data?.success) {
+      toast.error("Verification failed");
       return { success: false };
     }
-    if (!response?.data?.verified) {
-      toast.error("Current password is wrong");
+
+    if (!res?.data?.verified) {
+      toast.error("Current password is incorrect");
       return { success: false };
     }
+
     return { success: true };
   } catch (err) {
     handleApiError(err);
@@ -22,11 +25,14 @@ const verifyPassword = async (password: string) => {
 
 const changePassword = async (password: string) => {
   try {
-    const response = await api.post("/password/change", { password });
-    if (!response?.data?.success) {
-      toast.error("Failed to update the new password");
+    const res = await api.post("/password/change", { password });
+
+    if (!res?.data?.success) {
+      toast.error("Failed to update password");
       return { success: false };
     }
+
+    toast.success("Password changed successfully");
     return { success: true };
   } catch (err) {
     handleApiError(err);
@@ -34,4 +40,4 @@ const changePassword = async (password: string) => {
   }
 };
 
-export { changePassword, verifyPassword };
+export { verifyPassword, changePassword };
