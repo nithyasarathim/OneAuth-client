@@ -5,6 +5,7 @@ import GuestRoute from "./pages/globalComponents/GuestRoute";
 import LoginPage from "./pages/auth/login/login.page";
 import ProfilePage from "./pages/profile/profile.page";
 import ProtectedRoute from "./pages/globalComponents/ProtectedRoute";
+import SingleSignOn from "./pages/singleSignOn/sso.page";
 
 const App = () => {
   return (
@@ -24,6 +25,15 @@ const App = () => {
           <GuestRoute>
             <LoginPage />
           </GuestRoute>
+        }
+      />
+
+      <Route
+        path="/sso"
+        element={
+          <ProtectedRoute>
+            <SingleSignOn />
+          </ProtectedRoute>
         }
       />
 

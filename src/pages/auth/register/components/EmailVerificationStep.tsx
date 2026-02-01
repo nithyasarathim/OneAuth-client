@@ -13,8 +13,9 @@ const EmailStep = ({ email, setEmail }: EmailVerificationProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const redirectPath =
-    location.pathname.replace(/^\/auth\/register/, "") || "/";
+  // Preserve redirect param
+  const params = new URLSearchParams(location.search);
+  const redirect = params.get("redirect") || "/";
 
   return (
     <motion.div key="email" {...smooth} className="space-y-5">
@@ -31,7 +32,11 @@ const EmailStep = ({ email, setEmail }: EmailVerificationProps) => {
         Already have an account?
         <button
           type="button"
-          onClick={() => navigate(`/auth/login${redirectPath}`)}
+          onClick={() =>
+            navigate(`/auth/login?redirect=${encodeURIComponent(redirect)}`, {
+              replace: true,
+            })
+          }
           className="ml-2 font-medium text-sky-600 hover:underline cursor-pointer"
         >
           Log In

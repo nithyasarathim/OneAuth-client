@@ -12,7 +12,9 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const redirectPath = location.pathname.replace(/^\/auth\/login/, "") || "/";
+  // Extract redirect param from URL
+  const params = new URLSearchParams(location.search);
+  const redirect = params.get("redirect") || "/";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -38,7 +40,7 @@ const LoginPage = () => {
       setIsSuccess(true);
 
       setTimeout(() => {
-        navigate(redirectPath);
+        navigate(redirect);
       }, 1200);
     } catch {
       toast.error("Login failed. Try again.");
@@ -85,7 +87,9 @@ const LoginPage = () => {
         Don't have an account?
         <button
           type="button"
-          onClick={() => navigate(`/auth/register${redirectPath}`)}
+          onClick={() =>
+            navigate(`/auth/register?redirect=${encodeURIComponent(redirect)}`)
+          }
           className="font-medium px-2 text-sky-600 hover:underline bg-transparent"
         >
           Create One!

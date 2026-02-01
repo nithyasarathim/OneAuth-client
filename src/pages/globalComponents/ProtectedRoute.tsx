@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import api from "../utils/axios";
 
-interface RouteProps{
-    children: React.ReactNode;
+interface RouteProps {
+  children: React.ReactNode;
 }
+
 const ProtectedRoute = ({ children }: RouteProps) => {
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     let mounted = true;
@@ -32,7 +34,8 @@ const ProtectedRoute = ({ children }: RouteProps) => {
   if (loading) return null;
 
   if (!authorized) {
-    return <Navigate to="/auth/login" replace />;
+    const redirectTo = encodeURIComponent(location.pathname + location.search);
+    return <Navigate to={`/auth/login?redirect=${redirectTo}`} replace />;
   }
 
   return children;

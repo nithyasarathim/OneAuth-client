@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import AuthLayout from "../auth.layout";
 
@@ -21,6 +22,16 @@ import {
 } from "./api/register.api";
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const params = new URLSearchParams(location.search);
+  let redirectPath = params.get("redirect") || "/";
+
+  if (!redirectPath.startsWith("/")) {
+    redirectPath = "/";
+  }
+
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
@@ -48,7 +59,11 @@ const RegisterPage = () => {
 
     if (step === 3) {
       setStep(4);
-      await new Promise((r) => setTimeout(r, 2000));
+
+      setTimeout(() => {
+        navigate(redirectPath, { replace: true });
+      }, 2000);
+
       setIsLoading(false);
       return;
     }
