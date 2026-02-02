@@ -52,7 +52,7 @@ const SSOAuthorizePage = () => {
 
         setStatus("success");
         setMessage("Authorization granted!"+res.authCode);
-        window.location.href = `${redirectUri}?code=${res.authCode}&state=${state}`;
+        // window.location.href = `${redirectUri}?code=${res.authCode}&state=${state}`;
       } catch (err: any) {
         setStatus("error");
         setMessage(err?.message || "SSO authorization failed");

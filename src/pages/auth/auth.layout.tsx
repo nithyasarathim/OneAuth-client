@@ -62,14 +62,17 @@ const AuthLayoutWave = ({ children }: AuthLayoutProps) => {
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45, ease: "easeOut" }}
-        className="relative z-10 w-full max-w-md  border-1 bg-white/40 rounded-sm px-3 py-6 backdrop-blur-xl shadow-xs border-sky-300 flex flex-col items-center gap-4"
+        className="relative w-full max-w-md  border-1 bg-white/50 rounded-2xl px-3 py-10 backdrop-blur-xl shadow-xs border-sky-300 flex flex-col items-center gap-4"
       >
         <UserLock size={60} className="text-sky-500" />
         <div className="flex gap-2 text-3xl font-bold">
           <span className="text-sky-500">ONE</span>
           <span>Account</span>
         </div>
-        <div className="w-full min-h-fit pt-10">{children}</div>
+        <p className="text-gray-900 text-sm">
+          Sign In Once. Work Everywhere
+        </p>
+        <div className="w-full min-h-fit pt-4">{children}</div>
       </motion.div>
     </div>
   );
