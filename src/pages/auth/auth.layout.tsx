@@ -61,7 +61,7 @@ const AuthLayoutWave = ({ children }: AuthLayoutProps) => {
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45, ease: "easeOut" }}
-        className="relative w-full max-w-md  border-1 bg-white/50 rounded-2xl px-3 py-10 backdrop-blur-xl shadow-xs border-sky-300 flex flex-col items-center gap-4"
+        className="relative w-full max-w-md  border-1 bg-white/50 rounded-2xl px-3 py-8 backdrop-blur-xl shadow-xs border-sky-300 flex flex-col items-center gap-4"
       >
         <UserLock size={60} className="text-sky-500" />
         <div className="flex gap-2 text-3xl font-bold">
@@ -71,7 +71,7 @@ const AuthLayoutWave = ({ children }: AuthLayoutProps) => {
         <p className="text-gray-900 text-sm">
           One Identity for all your apps.
         </p>
-        <div className="w-full min-h-fit pt-4">{children}</div>
+        <div className="w-full min-h-fit pt-3">{children}</div>
       </motion.div>
     </div>
   );

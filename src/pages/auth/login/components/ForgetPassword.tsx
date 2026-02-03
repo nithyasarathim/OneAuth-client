@@ -2,8 +2,14 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import OtpInput from "react-otp-input";
-import { verifyEmail, verifyOtp, resetPassword } from "../api/resetpwd.api";
 import { Eye, EyeOff } from "lucide-react";
+
+import { verifyEmail, verifyOtp, resetPassword } from "../api/resetpwd.api";
+import RuleChip from "./RuleChip";
+import {
+  getForgetPasswordRuleStatus,
+  validateForgetPassword,
+} from "../validators/password.validator";
 
 const inputClass =
   "w-full px-4 pb-2 border-b border-gray-300 outline-none focus:border-sky-500 transition";
@@ -37,6 +43,8 @@ const ForgetPassword = ({ onBack }: ForgetPasswordProps) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const rulesStatus = getForgetPasswordRuleStatus(newPassword);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -47,24 +55,24 @@ const ForgetPassword = ({ onBack }: ForgetPasswordProps) => {
         if (!email) return toast.error("Please enter your email");
 
         const res = await verifyEmail(email);
-        if (!res.success) return toast.error(res.message);
+        if (!res.success) return toast.error(res.message!);
 
         setOtpSent(true);
-        return toast.success(res.message);
+        return toast.success(res.message!);
       }
 
       if (!otpVerified) {
         if (otp.length !== 4) return toast.error("Enter a 4-digit OTP");
 
         const res = await verifyOtp(email, otp);
-        if (!res.success) return toast.error(res.message);
+        if (!res.success) return toast.error(res.message!);
 
         setOtpVerified(true);
-        return toast.success(res.message);
+        return toast.success(res.message!);
       }
 
-      if (!newPassword || !confirmPassword) {
-        return toast.error("Please fill both password fields");
+      if (!validateForgetPassword(newPassword)) {
+        return toast.error("Password does not meet requirements");
       }
 
       if (newPassword !== confirmPassword) {
@@ -72,9 +80,9 @@ const ForgetPassword = ({ onBack }: ForgetPasswordProps) => {
       }
 
       const res = await resetPassword(email, newPassword);
-      if (!res.success) return toast.error(res.message);
+      if (!res.success) return toast.error(res.message!);
 
-      toast.success(res.message);
+      toast.success(res.message!);
       onBack();
     } finally {
       setLoading(false);
@@ -83,66 +91,55 @@ const ForgetPassword = ({ onBack }: ForgetPasswordProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="px-6 py-4 space-y-5">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0, transition: { duration: 0.4 } }}
-        className="text-center"
-      >
-        {!otpSent ? (
-          <input
-            type="email"
-            placeholder="Email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className={inputClass}
-            disabled={loading}
-          />
-        ) : (
-          <div>
-            <p className="text-gray-500 text-xs">Enter the code sent to</p>
-            <p className="text-sky-500 font-semibold text-sm">{email}</p>
-          </div>
-        )}
-      </motion.div>
+      {!otpSent ? (
+        <input
+          type="email"
+          placeholder="Email address"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className={inputClass}
+        />
+      ) : (
+        <div className="text-center">
+          <p className="text-xs text-gray-500">Enter the code sent to</p>
+          <p className="text-sm font-semibold text-sky-500">{email}</p>
+        </div>
+      )}
 
       <AnimatePresence mode="wait">
         {!otpVerified && otpSent && (
           <motion.div
             key="otp"
+            variants={containerVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
-            variants={containerVariants}
-            className="text-center mt-6"
+            className="flex justify-center pt-4"
           >
             <OtpInput
               value={otp}
               onChange={setOtp}
               numInputs={4}
-              inputType="tel"
               renderInput={(props) => (
                 <input
                   {...props}
-                  style={{ width: 55, height: 55 }}
-                  className="text-lg font-bold text-center border-2 rounded-xl border-gray-300 focus:border-sky-500 outline-none transition"
+                  style={{ width: "55px", height: "55px" }}
+                  className="text-lg font-bold text-center border-2 border-gray-300 rounded-xl focus:border-sky-500 focus:ring-0.5 outline-none transition"
                 />
               )}
-              containerStyle={{
-                display: "flex",
-                justifyContent: "center",
-                gap: 16,
-              }}
+              containerStyle="justify-center gap-4"
             />
           </motion.div>
         )}
 
         {otpVerified && (
           <motion.div
-            key="passwords"
+            key="password"
+            variants={containerVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="space-y-5 mt-6"
+            className="space-y-4"
           >
             <div className="relative">
               <input
@@ -154,8 +151,8 @@ const ForgetPassword = ({ onBack }: ForgetPasswordProps) => {
               />
               <button
                 type="button"
-                onClick={() => setShowNewPassword((v) => !v)}
-                className="absolute right-2 top-1 text-gray-500"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                className="absolute right-2 top-1"
               >
                 {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -171,11 +168,21 @@ const ForgetPassword = ({ onBack }: ForgetPasswordProps) => {
               />
               <button
                 type="button"
-                onClick={() => setShowConfirmPassword((v) => !v)}
-                className="absolute right-2 top-1 text-gray-500"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-2 top-1"
               >
                 {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
+            </div>
+
+            <div className="pt-2 space-y-2">
+              <div className="flex flex-wrap justify-center items-center gap-2">
+                <RuleChip ok={rulesStatus.uppercase} label="Uppercase" />
+                <RuleChip ok={rulesStatus.lowercase} label="Lowercase" />
+                <RuleChip ok={rulesStatus.number} label="Number" />
+                <RuleChip ok={rulesStatus.special} label="Special" />
+                <RuleChip ok={rulesStatus.length} label="8+ chars" />
+              </div>
             </div>
           </motion.div>
         )}
@@ -183,8 +190,13 @@ const ForgetPassword = ({ onBack }: ForgetPasswordProps) => {
 
       <button
         type="submit"
-        disabled={loading}
-        className="w-full py-2 font-semibold text-white bg-sky-500 rounded-xl hover:bg-sky-600 disabled:opacity-60 transition"
+        disabled={
+          loading ||
+          (otpVerified &&
+            (!validateForgetPassword(newPassword) ||
+              newPassword !== confirmPassword))
+        }
+        className="w-full rounded-xl bg-sky-500 py-2 text-white font-semibold disabled:opacity-60"
       >
         {!otpSent
           ? "Send Code"
@@ -196,9 +208,9 @@ const ForgetPassword = ({ onBack }: ForgetPasswordProps) => {
       <button
         type="button"
         onClick={onBack}
-        className="w-full text-sm text-gray-600 hover:underline"
+        className="w-full text-sm text-gray-500 hover:underline"
       >
-        ← Back to Login
+        ← Back to login
       </button>
     </form>
   );
