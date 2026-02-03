@@ -2,6 +2,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import OtpInput from "react-otp-input";
+import { verifyEmail, verifyOtp, resetPassword } from "../api/resetpwd.api";
 import { Eye, EyeOff } from "lucide-react";
 
 const inputClass =
@@ -34,32 +35,50 @@ const ForgetPassword = ({ onBack }: ForgetPasswordProps) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!otpSent) {
-      if (!email) return toast.error("Please enter your email.");
-      setOtpSent(true);
-      return toast.success("OTP sent (demo)");
-    }
+    try {
+      setLoading(true);
 
-    if (!otpVerified) {
-      if (otp.length !== 4) return toast.error("Enter 4-digit OTP.");
-      setOtpVerified(true);
-      return toast.success("OTP verified (demo)");
-    }
+      if (!otpSent) {
+        if (!email) return toast.error("Please enter your email");
 
-    if (!newPassword || !confirmPassword) {
-      return toast.error("Please enter and confirm your new password.");
-    }
+        const res = await verifyEmail(email);
+        if (!res.success) return toast.error(res.message);
 
-    if (newPassword !== confirmPassword) {
-      return toast.error("Passwords do not match.");
-    }
+        setOtpSent(true);
+        return toast.success(res.message);
+      }
 
-    toast.success("Password updated (demo)");
-    onBack();
+      if (!otpVerified) {
+        if (otp.length !== 4) return toast.error("Enter a 4-digit OTP");
+
+        const res = await verifyOtp(email, otp);
+        if (!res.success) return toast.error(res.message);
+
+        setOtpVerified(true);
+        return toast.success(res.message);
+      }
+
+      if (!newPassword || !confirmPassword) {
+        return toast.error("Please fill both password fields");
+      }
+
+      if (newPassword !== confirmPassword) {
+        return toast.error("Passwords do not match");
+      }
+
+      const res = await resetPassword(email, newPassword);
+      if (!res.success) return toast.error(res.message);
+
+      toast.success(res.message);
+      onBack();
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -76,6 +95,7 @@ const ForgetPassword = ({ onBack }: ForgetPasswordProps) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className={inputClass}
+            disabled={loading}
           />
         ) : (
           <div>
@@ -163,13 +183,14 @@ const ForgetPassword = ({ onBack }: ForgetPasswordProps) => {
 
       <button
         type="submit"
-        className="w-full py-2 font-semibold text-white bg-sky-500 rounded-xl hover:bg-sky-600 transition"
+        disabled={loading}
+        className="w-full py-2 font-semibold text-white bg-sky-500 rounded-xl hover:bg-sky-600 disabled:opacity-60 transition"
       >
         {!otpSent
           ? "Send Code"
           : !otpVerified
-          ? "Verify OTP"
-          : "Update Password"}
+            ? "Verify OTP"
+            : "Update Password"}
       </button>
 
       <button

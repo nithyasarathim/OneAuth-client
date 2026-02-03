@@ -14,8 +14,7 @@ const AuthLayoutWave = ({ children }: AuthLayoutProps) => {
         animate={{ backgroundPositionX: ["0%", "100%"] }}
         transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
         style={{
-          backgroundImage:
-            "linear-gradient(135deg,#e0f2fe,#f8fbff,#e0f2fe)",
+          backgroundImage: "linear-gradient(135deg,#e0f2fe,#f8fbff,#e0f2fe)",
           backgroundSize: "200% 200%",
         }}
       />
@@ -70,7 +69,7 @@ const AuthLayoutWave = ({ children }: AuthLayoutProps) => {
           <span>Account</span>
         </div>
         <p className="text-gray-900 text-sm">
-          Sign In Once. Work Everywhere
+          One Identity for all your apps.
         </p>
         <div className="w-full min-h-fit pt-4">{children}</div>
       </motion.div>
