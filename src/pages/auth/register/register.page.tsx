@@ -74,11 +74,9 @@ const RegisterPage = () => {
       }
 
       setStep(step + 1);
-      setIsLoading(false);
-    } else {
-      setIsLoading(false);
-      return;
     }
+
+    setIsLoading(false);
   };
 
   return (
