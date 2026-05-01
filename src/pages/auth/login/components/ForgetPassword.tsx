@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useId } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, KeyRound, Mail, ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
@@ -12,6 +12,11 @@ const ForgetPassword = ({ onBack }: { onBack: () => void }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const emailId = useId();
+  const otpId = useId();
+  const passwordId = useId();
+  const confirmPasswordId = useId();
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,7 +91,7 @@ const ForgetPassword = ({ onBack }: { onBack: () => void }) => {
             className="space-y-6"
           >
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 ml-1">
+              <label htmlFor={emailId} className="text-sm font-medium text-gray-700 ml-1 cursor-pointer">
                 Email Address
               </label>
               <div className="relative group">
@@ -95,6 +100,7 @@ const ForgetPassword = ({ onBack }: { onBack: () => void }) => {
                   size={18}
                 />
                 <input
+                  id={emailId}
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -111,7 +117,7 @@ const ForgetPassword = ({ onBack }: { onBack: () => void }) => {
               className="w-full py-3 bg-sky-500 hover:bg-sky-600 disabled:bg-gray-300 text-white font-semibold rounded-xl shadow-lg shadow-sky-500/20 transition-all flex items-center justify-center gap-2 group"
             >
               {getButtonContent()}
-              {isLoading ? null : (
+              {!isLoading && (
                 <ArrowRight
                   size={18}
                   className="group-hover:translate-x-1 transition-transform"
@@ -129,10 +135,11 @@ const ForgetPassword = ({ onBack }: { onBack: () => void }) => {
             className="space-y-5"
           >
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 ml-1">
+              <label htmlFor={otpId} className="text-sm font-medium text-gray-700 ml-1 cursor-pointer">
                 Verification Code
               </label>
               <input
+                id={otpId}
                 type="text"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
@@ -144,7 +151,7 @@ const ForgetPassword = ({ onBack }: { onBack: () => void }) => {
             </div>
 
             <div className="space-y-2 text-left">
-              <label className="text-sm font-medium text-gray-700 ml-1">
+              <label htmlFor={passwordId} className="text-sm font-medium text-gray-700 ml-1 cursor-pointer">
                 New Password
               </label>
               <div className="relative group">
@@ -153,6 +160,7 @@ const ForgetPassword = ({ onBack }: { onBack: () => void }) => {
                   size={18}
                 />
                 <input
+                  id={passwordId}
                   type={showPassword ? "text" : "password"}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
@@ -171,7 +179,7 @@ const ForgetPassword = ({ onBack }: { onBack: () => void }) => {
             </div>
 
             <div className="space-y-2 text-left">
-              <label className="text-sm font-medium text-gray-700 ml-1">
+              <label htmlFor={confirmPasswordId} className="text-sm font-medium text-gray-700 ml-1 cursor-pointer">
                 Confirm New Password
               </label>
               <div className="relative group">
@@ -180,6 +188,7 @@ const ForgetPassword = ({ onBack }: { onBack: () => void }) => {
                   size={18}
                 />
                 <input
+                  id={confirmPasswordId}
                   type={showPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
