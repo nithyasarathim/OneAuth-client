@@ -13,7 +13,6 @@ const EmailStep = ({ email, setEmail }: EmailVerificationProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Preserve redirect param
   const params = new URLSearchParams(location.search);
   const redirect = params.get("redirect") || "/";
 
@@ -29,7 +28,7 @@ const EmailStep = ({ email, setEmail }: EmailVerificationProps) => {
       />
 
       <p className="text-center text-sm text-gray-600">
-        Already have an account?
+        <span>Already have an account?</span>
         <button
           type="button"
           onClick={() =>

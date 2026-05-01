@@ -77,8 +77,9 @@ const LoginPage = () => {
           </form>
 
           <p className="text-center mt-6 text-sm text-gray-600">
-            Don't have an account?
+            Don't have an account?{" "}
             <button
+              type="button"
               onClick={() =>
                 navigate(
                   `/auth/register?redirect=${encodeURIComponent(redirect)}`,
