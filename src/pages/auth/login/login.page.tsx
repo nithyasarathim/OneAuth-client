@@ -27,12 +27,13 @@ const LoginPage = () => {
     setIsLoading(true);
     try {
       const res = await loginUser(email, password);
-      if (!res.success) {
+      if (res.success) {
+        setIsSuccess(true);
+        setTimeout(() => navigate(redirect), 1200);
+      } else {
         setIsLoading(false);
         return;
       }
-      setIsSuccess(true);
-      setTimeout(() => navigate(redirect), 1200);
     } catch {
       toast.error("Login failed. Try again.");
       setIsLoading(false);
@@ -68,10 +69,10 @@ const LoginPage = () => {
               disabled={isLoading}
               className="w-full py-2 font-semibold text-white bg-sky-500 hover:bg-sky-600 disabled:bg-gray-300 rounded-xl flex items-center justify-center"
             >
-              {!isLoading ? (
-                "Log In"
-              ) : (
+              {isLoading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                "Log In"
               )}
             </button>
           </form>

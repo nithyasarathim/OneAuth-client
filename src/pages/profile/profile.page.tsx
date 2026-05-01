@@ -37,7 +37,7 @@ const ProfilePage = () => {
             ...prev,
             ...updated,
           }
-        : prev
+        : prev,
     );
   };
 
@@ -48,8 +48,26 @@ const ProfilePage = () => {
             ...prev,
             profileUrl: url,
           }
-        : prev
+        : prev,
     );
+  };
+
+  const renderContent = () => {
+    if (loading || !user) {
+      return <ProfileCardShimmer />;
+    }
+
+    if (activeTab === "profile") {
+      return (
+        <ProfileCard
+          user={user}
+          switchToSettings={() => setActiveTab("settings")}
+          onAvatarUpdate={handleAvatarUpdate}
+        />
+      );
+    }
+
+    return <AccountSettings user={user} onSaveProfile={handleProfileUpdate} />;
   };
 
   return (
@@ -80,20 +98,7 @@ const ProfilePage = () => {
           }}
         >
           <div className="h-[90%] overflow-y-auto scrollbar-hide">
-            {loading || !user ? (
-              <ProfileCardShimmer />
-            ) : activeTab === "profile" ? (
-              <ProfileCard
-                user={user}
-                switchToSettings={() => setActiveTab("settings")}
-                onAvatarUpdate={handleAvatarUpdate}
-              />
-            ) : (
-              <AccountSettings
-                user={user}
-                onSaveProfile={handleProfileUpdate}
-              />
-            )}
+            {renderContent()}
           </div>
         </main>
       </div>

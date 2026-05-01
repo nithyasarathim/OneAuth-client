@@ -43,33 +43,42 @@ const RegisterPage = () => {
     if (isLoading) return;
     setIsLoading(true);
 
-    if (step === 1 && !validateEmail(email)) { setIsLoading(false); return; }
-    if (step === 2 && !validateOTP(otp)) { setIsLoading(false); return; }
-    if (step === 3 && !validatePassword(password, confirmPassword)) { setIsLoading(false); return; }
+    if (step === 1 && !validateEmail(email)) {
+      setIsLoading(false);
+      return;
+    }
+    if (step === 2 && !validateOTP(otp)) {
+      setIsLoading(false);
+      return;
+    }
+    if (step === 3 && !validatePassword(password, confirmPassword)) {
+      setIsLoading(false);
+      return;
+    }
 
     let res;
     if (step === 1) res = await sendEmailVerification(email);
     if (step === 2) res = await verifyOTP(email, otp);
     if (step === 3) res = await createAccount(email, password);
 
-    if (!res!.success) {
+    if (res?.success) {
+      if (step === 3) {
+        setStep(4);
+
+        setTimeout(() => {
+          navigate(redirectPath, { replace: true });
+        }, 2000);
+
+        setIsLoading(false);
+        return;
+      }
+
+      setStep(step + 1);
+      setIsLoading(false);
+    } else {
       setIsLoading(false);
       return;
     }
-
-    if (step === 3) {
-      setStep(4);
-
-      setTimeout(() => {
-        navigate(redirectPath, { replace: true });
-      }, 2000);
-
-      setIsLoading(false);
-      return;
-    }
-
-    setStep(step + 1);
-    setIsLoading(false);
   };
 
   return (
@@ -108,14 +117,14 @@ const RegisterPage = () => {
             disabled={isLoading}
             className="w-full py-2 font-semibold text-white bg-sky-500 hover:bg-sky-600 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center gap-2"
           >
-            {!isLoading ? (
+            {isLoading ? (
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
               <>
                 {step === 1 && "Verify Email"}
                 {step === 2 && "Verify Code"}
                 {step === 3 && "Create Account"}
               </>
-            ) : (
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             )}
           </button>
         )}

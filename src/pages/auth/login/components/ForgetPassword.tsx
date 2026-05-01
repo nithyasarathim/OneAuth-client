@@ -1,218 +1,214 @@
 import { useState } from "react";
-import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
-import OtpInput from "react-otp-input";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, KeyRound, Mail, ArrowRight } from "lucide-react";
+import toast from "react-hot-toast";
+import { resetPassword, sendResetOtp } from "../../api/login.api";
 
-import { verifyEmail, verifyOtp, resetPassword } from "../api/resetpwd.api";
-import RuleChip from "./RuleChip";
-import {
-  getForgetPasswordRuleStatus,
-  validateForgetPassword,
-} from "../validators/password.validator";
-
-const inputClass =
-  "w-full px-4 pb-2 border-b border-gray-300 outline-none focus:border-sky-500 transition";
-
-interface ForgetPasswordProps {
-  onBack: () => void;
-}
-
-const containerVariants = {
-  hidden: { opacity: 0, x: 60 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.4, ease: "easeInOut" },
-  },
-  exit: {
-    opacity: 0,
-    x: -60,
-    transition: { duration: 0.4, ease: "easeInOut" },
-  },
-};
-
-const ForgetPassword = ({ onBack }: ForgetPasswordProps) => {
+const ForgetPassword = ({ onBack }: { onBack: () => void }) => {
+  const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpVerified, setOtpVerified] = useState(false);
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const rulesStatus = getForgetPasswordRuleStatus(newPassword);
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email) {
+      toast.error("Please enter your email");
+      return;
+    }
 
+    setIsLoading(true);
     try {
-      setLoading(true);
-
-      if (!otpSent) {
-        if (!email) return toast.error("Please enter your email");
-
-        const res = await verifyEmail(email);
-        if (!res.success) return toast.error(res.message!);
-
-        setOtpSent(true);
-        return toast.success(res.message!);
+      const res = await sendResetOtp(email);
+      if (res.success) {
+        setStep(2);
+        toast.success("Reset code sent to your email");
+      } else {
+        toast.error(res.message || "Failed to send reset code");
       }
-
-      if (!otpVerified) {
-        if (otp.length !== 4) return toast.error("Enter a 4-digit OTP");
-
-        const res = await verifyOtp(email, otp);
-        if (!res.success) return toast.error(res.message!);
-
-        setOtpVerified(true);
-        return toast.success(res.message!);
-      }
-
-      if (!validateForgetPassword(newPassword)) {
-        return toast.error("Password does not meet requirements");
-      }
-
-      if (newPassword !== confirmPassword) {
-        return toast.error("Passwords do not match");
-      }
-
-      const res = await resetPassword(email, newPassword);
-      if (!res.success) return toast.error(res.message!);
-
-      toast.success(res.message!);
-      onBack();
+    } catch {
+      toast.error("Something went wrong");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+    if (newPassword.length < 8) {
+      toast.error("Password must be at least 8 characters");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const res = await resetPassword(email, otp, newPassword);
+      if (res.success) {
+        toast.success("Password reset successfully");
+        onBack();
+      } else {
+        toast.error(res.message || "Reset failed");
+      }
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getButtonContent = () => {
+    if (isLoading) {
+      return (
+        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+      );
+    }
+    if (step === 1) return "Send Reset Link";
+    return "Update Password";
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="px-6 py-4 space-y-5">
-      {!otpSent ? (
-        <input
-          type="email"
-          placeholder="Email address"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className={inputClass}
-        />
-      ) : (
-        <div className="text-center">
-          <p className="text-xs text-gray-500">Enter the code sent to</p>
-          <p className="text-sm font-semibold text-sky-500">{email}</p>
-        </div>
-      )}
-
+    <div className="px-6 pb-6">
       <AnimatePresence mode="wait">
-        {!otpVerified && otpSent && (
-          <motion.div
-            key="otp"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            className="flex justify-center pt-4"
+        {step === 1 ? (
+          <motion.form
+            key="step1"
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 10 }}
+            onSubmit={handleSendOtp}
+            className="space-y-6"
           >
-            <OtpInput
-              value={otp}
-              onChange={setOtp}
-              numInputs={4}
-              renderInput={(props) => (
-                <input
-                  {...props}
-                  style={{ width: "55px", height: "55px" }}
-                  className="text-lg font-bold text-center border-2 border-gray-300 rounded-xl focus:border-sky-500 focus:ring-0.5 outline-none transition"
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 ml-1">
+                Email Address
+              </label>
+              <div className="relative group">
+                <Mail
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-sky-500 transition-colors"
+                  size={18}
                 />
-              )}
-              containerStyle="justify-center gap-4"
-            />
-          </motion.div>
-        )}
-
-        {otpVerified && (
-          <motion.div
-            key="password"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            className="space-y-4"
-          >
-            <div className="relative">
-              <input
-                type={showNewPassword ? "text" : "password"}
-                placeholder="New password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                className={`${inputClass} pr-10`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowNewPassword(!showNewPassword)}
-                className="absolute right-2 top-1"
-              >
-                {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-
-            <div className="relative">
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                placeholder="Confirm password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className={`${inputClass} pr-10`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-2 top-1"
-              >
-                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-
-            <div className="pt-2 space-y-2">
-              <div className="flex flex-wrap justify-center items-center gap-2">
-                <RuleChip ok={rulesStatus.uppercase} label="Uppercase" />
-                <RuleChip ok={rulesStatus.lowercase} label="Lowercase" />
-                <RuleChip ok={rulesStatus.number} label="Number" />
-                <RuleChip ok={rulesStatus.special} label="Special" />
-                <RuleChip ok={rulesStatus.length} label="8+ chars" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@company.com"
+                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none transition-all"
+                  required
+                />
               </div>
             </div>
-          </motion.div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3 bg-sky-500 hover:bg-sky-600 disabled:bg-gray-300 text-white font-semibold rounded-xl shadow-lg shadow-sky-500/20 transition-all flex items-center justify-center gap-2 group"
+            >
+              {getButtonContent()}
+              {isLoading ? null : (
+                <ArrowRight
+                  size={18}
+                  className="group-hover:translate-x-1 transition-transform"
+                />
+              )}
+            </button>
+          </motion.form>
+        ) : (
+          <motion.form
+            key="step2"
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -10 }}
+            onSubmit={handleResetPassword}
+            className="space-y-5"
+          >
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 ml-1">
+                Verification Code
+              </label>
+              <input
+                type="text"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                placeholder="Enter 6-digit code"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none transition-all text-center tracking-[0.5em] font-mono text-lg"
+                maxLength={6}
+                required
+              />
+            </div>
+
+            <div className="space-y-2 text-left">
+              <label className="text-sm font-medium text-gray-700 ml-1">
+                New Password
+              </label>
+              <div className="relative group">
+                <KeyRound
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-sky-500 transition-colors"
+                  size={18}
+                />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full pl-10 pr-12 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none transition-all"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-2 text-left">
+              <label className="text-sm font-medium text-gray-700 ml-1">
+                Confirm New Password
+              </label>
+              <div className="relative group">
+                <KeyRound
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-sky-500 transition-colors"
+                  size={18}
+                />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 outline-none transition-all"
+                  required
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3 bg-sky-500 hover:bg-sky-600 disabled:bg-gray-300 text-white font-semibold rounded-xl shadow-lg shadow-sky-500/20 transition-all flex items-center justify-center"
+            >
+              {getButtonContent()}
+            </button>
+          </motion.form>
         )}
       </AnimatePresence>
 
       <button
-        type="submit"
-        disabled={
-          loading ||
-          (otpVerified &&
-            (!validateForgetPassword(newPassword) ||
-              newPassword !== confirmPassword))
-        }
-        className="w-full rounded-xl bg-sky-500 py-2 text-white font-semibold disabled:opacity-60"
-      >
-        {!otpSent
-          ? "Send Code"
-          : !otpVerified
-            ? "Verify OTP"
-            : "Update Password"}
-      </button>
-
-      <button
         type="button"
         onClick={onBack}
-        className="w-full text-sm text-gray-500 hover:underline"
+        className="mt-6 w-full text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors"
       >
-        ← Back to login
+        Back to Login
       </button>
-    </form>
+    </div>
   );
 };
 

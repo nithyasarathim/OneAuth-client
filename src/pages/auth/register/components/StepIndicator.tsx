@@ -21,17 +21,17 @@ const StepIndicator = ({ step }: StepIndicatorProps) => {
           const isActive = step === num;
           const isCompleted = step > num && num !== 4;
 
+          const getStatusClasses = () => {
+            if (isCompleted) return "bg-sky-500 text-white shadow-md";
+            if (isActive) return "bg-sky-500 text-white ring-2 ring-sky-100 shadow-lg";
+            return "bg-white text-gray-400 border-2 border-gray-300";
+          };
+
           return (
             <motion.div
               key={num}
               layout
-              className={`flex items-center justify-center w-7 h-7 rounded-full text-sm font-semibold mt-1 z-10 ${
-                isCompleted
-                  ? "bg-sky-500 text-white shadow-md"
-                  : isActive
-                  ? "bg-sky-500 text-white ring-2 ring-sky-100 shadow-lg"
-                  : "bg-white text-gray-400 border-2 border-gray-300"
-              }`}
+              className={`flex items-center justify-center w-7 h-7 rounded-full text-sm font-semibold mt-1 z-10 ${getStatusClasses()}`}
               transition={{ type: "spring", stiffness: 400, damping: 28 }}
             >
               {isCompleted ? (

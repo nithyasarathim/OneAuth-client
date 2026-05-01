@@ -48,8 +48,8 @@ const ProfileCardShimmer = () => {
       <section className="bg-white rounded-2xl px-6 py-4 space-y-4">
         <Shimmer className="h-5 w-20 rounded-md" />
         <div className="flex flex-wrap justify-start gap-2">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Shimmer key={i} className="h-7 w-24 rounded-full" />
+          {["shimmer-tag-1", "shimmer-tag-2", "shimmer-tag-3"].map((key) => (
+            <Shimmer key={key} className="h-7 w-24 rounded-full" />
           ))}
         </div>
       </section>

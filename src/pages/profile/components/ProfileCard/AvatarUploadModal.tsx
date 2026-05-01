@@ -91,7 +91,7 @@ const AvatarUploadModal = ({ onClose, onUploaded, existingAvatar }: Props) => {
         } else {
           toast.error("Something went wrong while uploading the image");
         }
-      }
+      },
     );
   }, [onUploaded]);
 
@@ -112,6 +112,12 @@ const AvatarUploadModal = ({ onClose, onUploaded, existingAvatar }: Props) => {
     } finally {
       setUploading(false);
     }
+  };
+
+  const getUploadButtonText = () => {
+    if (uploading) return "Uploading...";
+    if (avatar) return "Replace photo";
+    return "Upload photo";
   };
 
   return (
@@ -158,11 +164,7 @@ const AvatarUploadModal = ({ onClose, onUploaded, existingAvatar }: Props) => {
                 className="relative flex w-full items-center justify-center rounded-xl bg-sky-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-sky-600 disabled:opacity-50"
               >
                 <Upload size={18} className="absolute left-6" />
-                {uploading
-                  ? "Uploading..."
-                  : avatar
-                  ? "Replace photo"
-                  : "Upload photo"}
+                {getUploadButtonText()}
               </button>
               <button
                 onClick={deleteAvatar}
