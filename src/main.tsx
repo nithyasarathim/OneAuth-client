@@ -1,22 +1,18 @@
 import "./assets/index.css";
 import App from "./App.tsx";
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import GlobalApiWatcher from "./pages/globalComponents/GlobalAPIWatcher.tsx";
-import { DotSquare } from "lucide-react";
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <BrowserRouter>
-      <GlobalApiWatcher />
-      <App />
-      <Toaster
-        position="top-center"
-        reverseOrder={false}
-        toastOptions={{ duration: 1000 }}
-      />
-    </BrowserRouter>
-  </StrictMode>,
+  <BrowserRouter>
+    <GlobalApiWatcher />
+    <App />
+    <Toaster
+      position="top-center"
+      reverseOrder={false}
+      toastOptions={{ duration: 1000 }}
+    />
+  </BrowserRouter>,
 );

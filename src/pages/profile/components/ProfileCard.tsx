@@ -5,7 +5,6 @@ import ProfileAvatar from "./ProfileCard/ProfileAvatar";
 import ProfileHeader from "./ProfileCard/ProfileHeader";
 import ProfileActions from "./ProfileCard/ProfileActions";
 import ProfileAbout from "./ProfileCard/ProfileAbout";
-import ProfileSkills from "./ProfileCard/ProfileSkills";
 
 type Props = {
   user: UserInterface;
@@ -29,7 +28,6 @@ const ProfileCard = ({ user, switchToSettings, onAvatarUpdate }: Props) => {
       <ProfileHeader user={user} />
       <ProfileActions user={user} switchToSettings={switchToSettings} />
       <ProfileAbout description={user.description} />
-      <ProfileSkills skills={user.skills} />
     </motion.section>
   );
 };

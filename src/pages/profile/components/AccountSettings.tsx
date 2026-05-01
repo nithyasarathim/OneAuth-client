@@ -1,18 +1,13 @@
 import { useEffect, useState } from "react";
-import Select from "react-select";
 import { Github, Linkedin } from "lucide-react";
 import { motion } from "framer-motion";
 
 import type { UserInterface, ProfileFormState } from "../types/profile.types";
-import type { MultiValue } from "react-select";
-import departments from "../constants/departments";
-import { skillsOptions } from "../constants/skills";
 import { updateProfile } from "../api/profile.api";
 import { validateProfile } from "../validators/profile.validate";
 
 import Field from "./AccountSettings/Field";
 import IconInput from "./AccountSettings/IconInput";
-import ResumeUpload from "./AccountSettings/ResumeUpload";
 import ChangePassword from "./AccountSettings/ChangePassword";
 
 type Props = {
@@ -23,33 +18,24 @@ type Props = {
 const AccountSettings = ({ user, onSaveProfile }: Props) => {
   const [form, setForm] = useState<ProfileFormState>({
     username: "",
-    department: "",
     githubUrl: "",
     linkedinUrl: "",
     description: "",
-    skills: [],
-    isAvailable: false,
   });
 
-  const [resume, setResume] = useState<File | null>(null);
   const [cooldown, setCooldown] = useState(false);
 
   useEffect(() => {
     setForm({
       username: user.username ?? "",
-      department: user.department ?? "",
       githubUrl: user.githubUrl ?? "",
       linkedinUrl: user.linkedinUrl ?? "",
       description: user.description ?? "",
-      skills: user.skills ?? [],
-      isAvailable: user.isAvailable ?? false,
     });
   }, [user]);
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     if (name === "username" && value.length > 25) return;
@@ -57,25 +43,13 @@ const AccountSettings = ({ user, onSaveProfile }: Props) => {
     setForm((p) => ({ ...p, [name]: value }));
   };
 
-  const handleSkillsChange = (
-    selected: MultiValue<{ label: string; value: string }>
-  ) => {
-    setForm((p) => ({
-      ...p,
-      skills: selected.map((s) => s.value),
-    }));
-  };
-
   const isChanged =
     JSON.stringify(form) !==
     JSON.stringify({
       username: user.username ?? "",
-      department: user.department ?? "",
       githubUrl: user.githubUrl ?? "",
       linkedinUrl: user.linkedinUrl ?? "",
       description: user.description ?? "",
-      skills: user.skills ?? [],
-      isAvailable: user.isAvailable ?? false,
     });
 
   const handleSave = async () => {
@@ -103,36 +77,10 @@ const AccountSettings = ({ user, onSaveProfile }: Props) => {
       <div className="rounded-3xl bg-white/80 backdrop-blur space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-semibold">Account Settings</h1>
-
-          <div className="flex items-center gap-3">
-            <span
-              className={`text-sm font-medium transition ${
-                form.isAvailable ? "text-sky-500" : "text-gray-500"
-              }`}
-            >
-              {form.isAvailable
-                ? "Available for teams"
-                : "Unavailable for teams"}
-            </span>
-            <button
-              onClick={() =>
-                setForm((p) => ({ ...p, isAvailable: !p.isAvailable }))
-              }
-              className={`w-14 h-7 rounded-full relative transition ${
-                form.isAvailable ? "bg-sky-500" : "bg-gray-300"
-              }`}
-            >
-              <span
-                className={`absolute top-1 left-1 h-5 w-5 rounded-full bg-white transition-transform ${
-                  form.isAvailable ? "translate-x-7" : ""
-                }`}
-              />
-            </button>
-          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-3 space-y-6">
             <Field label="Username">
               <input
                 name="username"
@@ -157,37 +105,6 @@ const AccountSettings = ({ user, onSaveProfile }: Props) => {
               onChange={handleChange}
               placeholder="LinkedIn profile link"
             />
-
-            <Field label="Skills">
-              <Select
-                isMulti
-                options={skillsOptions}
-                value={skillsOptions.filter((s) =>
-                  form.skills.includes(s.value)
-                )}
-                onChange={handleSkillsChange}
-              />
-            </Field>
-          </div>
-
-          <div className="space-y-6">
-            <Field label="Department">
-              <select
-                name="department"
-                value={form.department!}
-                onChange={handleChange}
-                className="w-full rounded-xl border px-4 py-3"
-              >
-                <option value="">Select department</option>
-                {departments.map((d) => (
-                  <option key={d} value={d}>
-                    {d}
-                  </option>
-                ))}
-              </select>
-            </Field>
-
-            <ResumeUpload resume={resume} setResume={setResume} />
           </div>
 
           <div className="lg:col-span-3">
@@ -211,12 +128,9 @@ const AccountSettings = ({ user, onSaveProfile }: Props) => {
             onClick={() =>
               setForm({
                 username: user.username ?? "",
-                department: user.department ?? "",
                 githubUrl: user.githubUrl ?? "",
                 linkedinUrl: user.linkedinUrl ?? "",
                 description: user.description ?? "",
-                skills: user.skills ?? [],
-                isAvailable: user.isAvailable ?? false,
               })
             }
             className="px-6 py-2 border rounded-xl"
@@ -237,7 +151,7 @@ const AccountSettings = ({ user, onSaveProfile }: Props) => {
           </button>
         </div>
         <div className="w-[100%] items-center px-auto">
-          <ChangePassword/>
+          <ChangePassword />
         </div>
       </div>
     </motion.section>

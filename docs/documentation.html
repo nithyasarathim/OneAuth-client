@@ -1,0 +1,1363 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OneAuth Client — Documentation</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Nunito+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg-primary: #ffffff;
+        --bg-secondary: #f0f9ff;
+        --bg-code: #f8fafc;
+        --bg-table-head: #0ea5e9;
+        --bg-table-alt: #f0f9ff;
+        --color-primary: #000000;
+        --color-secondary: #374151;
+        --color-muted: #6b7280;
+        --color-accent: #0ea5e9;
+        --color-accent-dark: #0284c7;
+        --color-accent-light: #e0f2fe;
+        --color-border: #e2e8f0;
+        --color-code-text: #0369a1;
+        --font-heading: "Poppins", sans-serif;
+        --font-body: "Nunito Sans", sans-serif;
+        --radius: 10px;
+        --radius-sm: 6px;
+        --shadow:
+          0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(14, 165, 233, 0.08);
+        --shadow-md: 0 4px 24px rgba(14, 165, 233, 0.13);
+        --page-margin: 64px;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: var(--font-body);
+        background: var(--bg-primary);
+        color: var(--color-primary);
+        line-height: 1.75;
+        font-size: 15.5px;
+      }
+
+      /* ── SIDEBAR ── */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: var(--page-margin);
+        width: 260px;
+        height: 100vh;
+        background: var(--bg-primary);
+        border-right: 1.5px solid var(--color-border);
+        overflow: hidden;
+        z-index: 100;
+        padding: 0 0 32px 0;
+      }
+
+      .sidebar-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 24px 20px 20px;
+        border-bottom: 1.5px solid var(--color-border);
+        margin-bottom: 12px;
+      }
+
+      .sidebar-brand .logo {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #0ea5e9;
+        overflow: hidden;
+      }
+
+      .sidebar-brand .logo svg {
+        width: 20px;
+        height: 20px;
+        color: white;
+      }
+
+      .sidebar-brand-name {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 15px;
+        color: var(--color-primary);
+        letter-spacing: -0.3px;
+      }
+
+      .sidebar-brand-sub {
+        font-size: 10.5px;
+        color: var(--color-muted);
+        font-family: var(--font-body);
+      }
+
+      .sidebar-section {
+        padding: 4px 12px;
+        margin-bottom: 2px;
+      }
+
+      .sidebar-section-title {
+        font-family: var(--font-heading);
+        font-size: 9.5px;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: var(--color-muted);
+        padding: 10px 8px 4px;
+        margin-top: 4px;
+      }
+
+      .sidebar-link {
+        display: block;
+        padding: 5px 8px;
+        border-radius: var(--radius-sm);
+        font-size: 13.5px;
+        color: var(--color-secondary);
+        text-decoration: none;
+        font-family: var(--font-body);
+        font-weight: 400;
+        transition: all 0.15s;
+      }
+
+      .sidebar-link:hover {
+        background: var(--color-accent-light);
+        color: var(--color-accent-dark);
+      }
+
+      .sidebar-coffee {
+        position: absolute;
+        bottom: 60px;
+        left: 10px;
+        right: 10px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--color-border);
+        text-align: center;
+      }
+
+      .sidebar-coffee a {
+        display: inline-block;
+        text-decoration: none;
+      }
+
+      .sidebar-coffee img {
+        max-width: 100%;
+        height: auto;
+      }
+
+      .sidebar-credit {
+        position: absolute;
+        bottom: 24px;
+        padding-top: 12px;
+        border-top: 1px solid var(--color-border);
+        text-align: center;
+        left: 30px;
+        font-size: 12px;
+        color: var(--color-muted);
+        font-family: var(--font-body);
+      }
+
+      .sidebar-credit a {
+        color: var(--color-accent);
+        text-decoration: none;
+        font-weight: bolder;
+        font-size: 14px;
+        transition: color 0.15s;
+      }
+
+      .sidebar-credit a:hover {
+        color: var(--color-accent-dark);
+        text-decoration: underline;
+      }
+
+      /* ── MAIN CONTENT ── */
+      .main {
+        margin-left: calc(260px + var(--page-margin));
+        margin-right: var(--page-margin);
+        min-height: 100vh;
+      }
+
+      .hero {
+        background: #ffffff;
+        padding: 50px 64px 48px;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 32px;
+      }
+
+      .hero-logo {
+        flex-shrink: 0;
+        height: 120px;
+        width: auto;
+        object-fit: contain;
+        display: block;
+      }
+
+      .hero-text {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: rgba(14, 165, 233, 0.18);
+        border: 1px solid rgba(14, 165, 233, 0.4);
+        color: #0284c7;
+        padding: 5px 14px;
+        border-radius: 99px;
+        font-family: var(--font-heading);
+        font-size: 11.5px;
+        font-weight: 600;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        margin-bottom: 22px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero-badge-dot {
+        width: 6px;
+        height: 6px;
+        background: #38bdf8;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+
+      .hero h1 {
+        font-family: var(--font-heading);
+        font-size: 48px;
+        font-weight: 800;
+        color: #000000;
+        letter-spacing: -1.5px;
+        line-height: 1.1;
+        margin-bottom: 18px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero h1 span {
+        color: var(--color-accent);
+      }
+
+      .hero-desc {
+        font-family: var(--font-body);
+        font-size: 16.5px;
+        color: #374151;
+        max-width: 600px;
+        line-height: 1.7;
+        position: relative;
+        z-index: 1;
+        margin-bottom: 32px;
+      }
+
+      .hero-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        position: relative;
+        z-index: 1;
+        justify-content: center;
+      }
+
+      .tech-badge {
+        background: #f0f9ff;
+        border: 1px solid #bae6fd;
+        color: #0369a1;
+        padding: 6px 14px;
+        border-radius: var(--radius-sm);
+        font-family: var(--font-heading);
+        font-size: 11.5px;
+        font-weight: 600;
+        letter-spacing: 0.4px;
+      }
+
+      /* ── CONTENT BODY ── */
+      .content {
+        max-width: 940px;
+        padding: 20px 64px 80px;
+        margin: 0 auto;
+      }
+
+      /* ── SECTION ── */
+      .section {
+        margin-bottom: 60px;
+      }
+
+      h2 {
+        font-family: var(--font-heading);
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--color-primary);
+        letter-spacing: -0.6px;
+        margin-bottom: 6px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--color-accent);
+        display: inline-block;
+      }
+
+      h3 {
+        font-family: var(--font-heading);
+        font-size: 17px;
+        font-weight: 600;
+        color: var(--color-primary);
+        margin: 28px 0 10px;
+        letter-spacing: -0.3px;
+      }
+
+      p {
+        color: var(--color-secondary);
+        margin-bottom: 14px;
+        font-family: var(--font-body);
+      }
+
+      /* ── CALLOUT ── */
+      .callout {
+        background: var(--color-accent-light);
+        border-left: 4px solid var(--color-accent);
+        padding: 14px 20px;
+        border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        margin: 20px 0;
+        color: var(--color-secondary);
+        font-size: 14.5px;
+      }
+
+      .callout strong {
+        color: var(--color-primary);
+        font-family: var(--font-heading);
+      }
+
+      /* ── TABLES ── */
+      .table-wrap {
+        overflow-x: auto;
+        border-radius: var(--radius);
+        border: 1.5px solid var(--color-border);
+        margin: 20px 0;
+        box-shadow: var(--shadow);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: var(--font-body);
+        font-size: 13.5px;
+      }
+
+      thead tr {
+        background: var(--bg-table-head);
+      }
+
+      thead th {
+        font-family: var(--font-heading);
+        font-weight: 600;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+        color: #ffffff;
+        padding: 11px 16px;
+        text-align: left;
+      }
+
+      tbody tr {
+        border-top: 1px solid var(--color-border);
+      }
+      tbody tr:nth-child(even) {
+        background: var(--bg-table-alt);
+      }
+      tbody tr:hover {
+        background: #dbeafe44;
+      }
+
+      td {
+        padding: 10px 16px;
+        color: var(--color-secondary);
+        vertical-align: top;
+      }
+
+      td:first-child {
+        font-family: var(--font-heading);
+        font-weight: 500;
+        color: var(--color-primary);
+        white-space: nowrap;
+      }
+
+      /* ── CODE ── */
+      code {
+        font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+        font-size: 13px;
+        background: var(--bg-code);
+        color: var(--color-code-text);
+        padding: 2px 6px;
+        border-radius: 4px;
+        border: 1px solid #e0f2fe;
+      }
+
+      pre {
+        background: #0f172a;
+        border-radius: var(--radius);
+        padding: 22px 24px;
+        overflow-x: auto;
+        margin: 20px 0;
+        border: 1px solid #1e293b;
+        box-shadow: var(--shadow-md);
+        position: relative;
+      }
+
+      pre code {
+        background: transparent;
+        color: #e2e8f0;
+        border: none;
+        padding: 0;
+        font-size: 13px;
+        line-height: 1.8;
+      }
+
+      .pre-label {
+        font-family: var(--font-heading);
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--color-accent);
+        margin-bottom: 10px;
+        display: block;
+      }
+
+      /* ── FLOW ── */
+      .flow-sso {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0;
+        margin: 22px 0;
+        background: var(--bg-code);
+        border: 1.5px solid var(--color-border);
+        border-radius: var(--radius);
+        padding: 20px 24px;
+        row-gap: 10px;
+      }
+
+      .flow-sso .flow-step {
+        display: flex;
+        align-items: center;
+      }
+
+      .flow-node {
+        background: var(--color-accent-light);
+        border: 1.5px solid var(--color-accent);
+        color: var(--color-accent-dark);
+        font-family: var(--font-heading);
+        font-size: 12px;
+        font-weight: 600;
+        padding: 8px 14px;
+        border-radius: var(--radius-sm);
+        white-space: nowrap;
+      }
+
+      .flow-node.dark {
+        background: var(--color-primary);
+        border-color: var(--color-primary);
+        color: #fff;
+      }
+
+      .flow-node.controller {
+        background: #0ea5e9;
+        border-color: #0284c7;
+        color: white;
+      }
+
+      .flow-arrow {
+        color: var(--color-accent);
+        font-size: 18px;
+        padding: 0 6px;
+        flex-shrink: 0;
+      }
+
+      .flow {
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+        margin: 22px 0;
+        background: var(--bg-code);
+        border: 1.5px solid var(--color-border);
+        border-radius: var(--radius);
+        padding: 20px 24px;
+      }
+
+      .flow-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .flow-connector {
+        padding-left: 60px;
+        color: var(--color-accent);
+        font-size: 18px;
+        line-height: 1;
+      }
+
+      /* ── ENV BLOCK ── */
+      .env-block {
+        background: #0f172a;
+        border-radius: var(--radius);
+        padding: 22px 24px;
+        margin: 20px 0;
+        border: 1px solid #1e293b;
+      }
+
+      .env-line {
+        font-family: "SF Mono", monospace;
+        font-size: 12.5px;
+        line-height: 2;
+        color: #94a3b8;
+      }
+
+      .env-key {
+        color: #7dd3fc;
+      }
+      .env-eq {
+        color: #64748b;
+      }
+      .env-val {
+        color: #a3e635;
+      }
+      .env-comment {
+        color: #475569;
+        font-style: italic;
+      }
+
+      /* ── ROUTE ROWS ── */
+      .api-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 11px 16px;
+        border: 1.5px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        margin-bottom: 6px;
+        background: var(--bg-primary);
+        transition: all 0.15s;
+      }
+
+      .api-row:hover {
+        border-color: var(--color-accent);
+        background: var(--color-accent-light);
+        transform: translateX(3px);
+      }
+
+      .method {
+        font-family: var(--font-heading);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        padding: 3px 9px;
+        border-radius: 4px;
+        min-width: 52px;
+        text-align: center;
+        flex-shrink: 0;
+      }
+
+      .method-get {
+        background: #dcfce7;
+        color: #166534;
+      }
+      .method-post {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+      .method-patch {
+        background: #fef9c3;
+        color: #854d0e;
+      }
+      .method-delete {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+
+      .api-path {
+        font-family: "SF Mono", monospace;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--color-primary);
+        min-width: 260px;
+        flex-shrink: 0;
+      }
+
+      .api-desc {
+        font-family: var(--font-body);
+        font-size: 13.5px;
+        color: var(--color-secondary);
+      }
+
+      /* ── FOOTER ── */
+      footer {
+        background: #f8fafc;
+        border-top: 1.5px solid var(--color-border);
+        padding: 28px 64px;
+        margin-left: calc(260px + var(--page-margin));
+        margin-right: var(--page-margin);
+      }
+
+      footer p {
+        font-size: 13px;
+        color: var(--color-muted);
+        margin: 0;
+      }
+
+      footer strong {
+        font-family: var(--font-heading);
+        color: var(--color-accent);
+      }
+
+      /* scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 99px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--color-accent);
+      }
+
+      /* lists */
+      ul,
+      ol {
+        padding-left: 22px;
+        color: var(--color-secondary);
+        margin: 10px 0;
+      }
+      li {
+        margin-bottom: 5px;
+        font-family: var(--font-body);
+      }
+
+      hr {
+        border: none;
+        border-top: 1.5px solid var(--color-border);
+        margin: 40px 0;
+      }
+
+      @media (max-width: 900px) {
+        :root {
+          --page-margin: 20px;
+        }
+        .sidebar {
+          display: none;
+        }
+        .main,
+        footer {
+          margin-left: 0;
+          margin-right: var(--page-margin);
+        }
+        .content {
+          padding: 32px 20px 60px;
+        }
+        .hero {
+          padding: 48px 20px 40px;
+        }
+        footer {
+          padding: 24px 20px;
+        }
+        .hero h1 {
+          font-size: 32px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ── SIDEBAR ── -->
+    <nav class="sidebar">
+      <div class="sidebar-brand">
+        <div class="logo">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="2" y="3" width="20" height="14" rx="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
+          </svg>
+        </div>
+        <div>
+          <div class="sidebar-brand-name">OneAuth Client</div>
+          <div class="sidebar-brand-sub">Documentation</div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Overview</div>
+        <a class="sidebar-link" href="#overview">Product Overview</a>
+        <a class="sidebar-link" href="#registration">Registration Funnel</a>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Architecture</div>
+        <a class="sidebar-link" href="#architecture">Project Structure</a>
+        <a class="sidebar-link" href="#routing">Routing Logic</a>
+        <a class="sidebar-link" href="#sso">SSO Role</a>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Reference</div>
+        <a class="sidebar-link" href="#env">Environment Variables</a>
+        <a class="sidebar-link" href="#setup">Installation & Usage</a>
+        <a class="sidebar-link" href="#scripts">Available Scripts</a>
+        <a class="sidebar-link" href="#notes">Repository Notes</a>
+      </div>
+
+      <div class="sidebar-coffee">
+        <a href="https://buymeacoffee.com/nithyasarathim" target="_blank">
+          <img
+            src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black"
+            alt="Buy Me a Coffee"
+          />
+        </a>
+      </div>
+
+      <div class="sidebar-credit">
+        Developed by
+        <a href="https://github.com/nithyasarathim" target="_blank"
+          >Nithyasarathim</a
+        >
+      </div>
+    </nav>
+
+    <!-- ── MAIN ── -->
+    <div class="main">
+      <!-- HERO -->
+      <div class="hero">
+        <div class="hero-text">
+          <img src="./logo.png" alt="OneAuth Logo" class="hero-logo" />
+          <div class="hero-badges">
+            <span class="tech-badge">React 19</span>
+            <span class="tech-badge">Vite · Rolldown</span>
+            <span class="tech-badge">TypeScript 5</span>
+            <span class="tech-badge">Axios · SSO</span>
+            <span class="tech-badge">React Router</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTENT -->
+      <div class="content">
+        <!-- OVERVIEW -->
+        <div class="section" id="overview">
+          <h2>Product Overview</h2>
+          <p style="margin-top: 14px">
+            OneAuth Client is a React + Vite single-page application that acts
+            as the shared authentication front door for multiple products.
+            Instead of each product owning its own login and registration
+            screens, this client centralizes the user journey around OneAuth.
+          </p>
+          <p>The client is responsible for:</p>
+          <ul>
+            <li>Registering new users through a guided verification funnel.</li>
+            <li>Logging users in through the OneAuth session API.</li>
+            <li>
+              Protecting private UI routes through live session validation.
+            </li>
+            <li>
+              Redirecting authenticated users through the SSO authorization
+              experience.
+            </li>
+            <li>
+              Managing profile, avatar, and password workflows from one account
+              portal.
+            </li>
+          </ul>
+        </div>
+
+        <hr />
+
+        <!-- REGISTRATION FUNNEL -->
+        <div class="section" id="registration">
+          <h2>Registration Funnel</h2>
+          <p style="margin-top: 14px">
+            The registration page is intentionally split into clear steps that
+            guide the user from initial email entry through to an active
+            authenticated session.
+          </p>
+
+          <div class="flow-sso">
+            <div class="flow-step">
+              <div class="flow-node dark">Email</div>
+              <span class="flow-arrow">→</span>
+            </div>
+            <div class="flow-step">
+              <div class="flow-node">OTP</div>
+              <span class="flow-arrow">→</span>
+            </div>
+            <div class="flow-step">
+              <div class="flow-node">Password</div>
+              <span class="flow-arrow">→</span>
+            </div>
+            <div class="flow-step">
+              <div class="flow-node">Account Details</div>
+              <span class="flow-arrow">→</span>
+            </div>
+            <div class="flow-step">
+              <div class="flow-node controller">Authenticated Session</div>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Step</th>
+                  <th>Purpose</th>
+                  <th>Main UI Modules</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Email</td>
+                  <td>Collect and validate the user's email address.</td>
+                  <td><code>EmailVerificationStep.tsx</code></td>
+                </tr>
+                <tr>
+                  <td>OTP</td>
+                  <td>Confirm ownership through a one-time password.</td>
+                  <td><code>OtpVerificationStep.tsx</code></td>
+                </tr>
+                <tr>
+                  <td>Password</td>
+                  <td>Capture and validate password strength.</td>
+                  <td>
+                    <code>PasswordStep.tsx</code>, <code>RuleChip.tsx</code>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Account Details</td>
+                  <td>Complete the account creation request.</td>
+                  <td>
+                    <code>AccountCreationStep.tsx</code>,
+                    <code>StepIndicator.tsx</code>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <hr />
+
+        <!-- ARCHITECTURE -->
+        <div class="section" id="architecture">
+          <h2>Architecture</h2>
+
+          <span
+            class="pre-label"
+            style="
+              display: block;
+              margin-top: 14px;
+              color: var(--color-muted);
+              font-family: var(--font-heading);
+              font-size: 11px;
+              font-weight: 600;
+              letter-spacing: 1px;
+            "
+          >
+            Project Structure
+          </span>
+          <pre><code>src/
+  App.tsx
+  main.tsx
+  assets/
+    index.css
+  pages/
+    auth/
+      login/
+        api/
+        components/
+        types/
+        validators/
+      register/
+        api/
+        components/
+        types/
+        validators/
+    globalComponents/
+    profile/
+      api/
+      components/
+      shimmers/
+      types/
+      validators/
+    singleSignOn/
+      api/
+    utils/</code></pre>
+
+          <h3>src/pages/ directory</h3>
+          <p>
+            The <code>src/pages/</code> directory is organized by product
+            workflow instead of by technical layer. Each major route owns its
+            UI, validation, API calls, and local types. This keeps
+            authentication flows easy to reason about because the code needed
+            for a screen lives close to the screen itself.
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Area</th>
+                  <th>Responsibility</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>auth/login/</td>
+                  <td>
+                    Login, password recovery, login validation, and session
+                    creation calls.
+                  </td>
+                </tr>
+                <tr>
+                  <td>auth/register/</td>
+                  <td>
+                    Email verification, OTP validation, password setup, and
+                    account creation.
+                  </td>
+                </tr>
+                <tr>
+                  <td>profile/</td>
+                  <td>
+                    Account profile, avatar upload, profile editing, and
+                    password changes.
+                  </td>
+                </tr>
+                <tr>
+                  <td>singleSignOn/</td>
+                  <td>
+                    SSO authorization screen and API bridge for client
+                    applications.
+                  </td>
+                </tr>
+                <tr>
+                  <td>globalComponents/</td>
+                  <td>Route guards and app-wide request/session behavior.</td>
+                </tr>
+                <tr>
+                  <td>utils/</td>
+                  <td>
+                    Environment mapping, Axios configuration, and shared API
+                    error handling.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Modular api/ folders</h3>
+          <p>
+            Each feature has its own <code>api/</code> folder. This pattern
+            avoids a single oversized API file and keeps the service contract
+            near the UI that consumes it.
+          </p>
+          <ul>
+            <li><code>src/pages/auth/login/api/login.api.tsx</code></li>
+            <li><code>src/pages/auth/register/api/register.api.tsx</code></li>
+            <li><code>src/pages/profile/api/profile.api.tsx</code></li>
+            <li><code>src/pages/profile/api/upload.api.tsx</code></li>
+            <li><code>src/pages/singleSignOn/api/sso.api.ts</code></li>
+          </ul>
+        </div>
+
+        <hr />
+
+        <!-- ROUTING LOGIC -->
+        <div class="section" id="routing">
+          <h2>Routing Logic</h2>
+
+          <h3>ProtectedRoute.tsx</h3>
+          <p>
+            <code>ProtectedRoute</code> guards authenticated pages such as
+            <code>/</code>, profile screens, and <code>/sso</code>.
+          </p>
+
+          <div class="flow">
+            <div class="flow-row">
+              <div class="flow-node dark" style="min-width: 160px">
+                Incoming Request
+              </div>
+            </div>
+            <div class="flow-connector">↓</div>
+            <div class="flow-row">
+              <div class="flow-node" style="min-width: 160px">
+                GET /auth/session/validate
+              </div>
+              <span
+                style="
+                  font-family: var(--font-body);
+                  font-size: 12.5px;
+                  color: var(--color-muted);
+                "
+                >Called through configured Axios client</span
+              >
+            </div>
+            <div class="flow-connector">↓</div>
+            <div class="flow-row">
+              <div class="flow-node" style="min-width: 160px">
+                Loading State
+              </div>
+              <span
+                style="
+                  font-family: var(--font-body);
+                  font-size: 12.5px;
+                  color: var(--color-muted);
+                "
+                >Page stays blank while validation is pending</span
+              >
+            </div>
+            <div class="flow-connector">↓</div>
+            <div class="flow-row">
+              <div class="flow-node" style="min-width: 160px">
+                Session Valid?
+              </div>
+            </div>
+            <div class="flow-connector">↓</div>
+            <div class="flow-row">
+              <div class="flow-node controller" style="min-width: 160px">
+                Allow Render
+              </div>
+              <span
+                style="
+                  font-family: var(--font-body);
+                  font-size: 12.5px;
+                  color: var(--color-muted);
+                "
+                >Or redirect to /auth/login with ?redirect= param</span
+              >
+            </div>
+          </div>
+
+          <p>
+            This keeps protected pages from rendering sensitive UI before the
+            session is verified. The original path is preserved in the
+            <code>redirect</code> query parameter so the user can return after
+            login.
+          </p>
+
+          <h3>GuestRoute.tsx</h3>
+          <p>
+            <code>GuestRoute</code> protects public authentication screens such
+            as <code>/auth/login</code> and <code>/auth/register</code>.
+          </p>
+
+          <div class="flow">
+            <div class="flow-row">
+              <div class="flow-node dark" style="min-width: 160px">
+                Public Page Request
+              </div>
+            </div>
+            <div class="flow-connector">↓</div>
+            <div class="flow-row">
+              <div class="flow-node" style="min-width: 160px">
+                GET /auth/session/validate
+              </div>
+            </div>
+            <div class="flow-connector">↓</div>
+            <div class="flow-row">
+              <div class="flow-node" style="min-width: 160px">No Session?</div>
+              <span
+                style="
+                  font-family: var(--font-body);
+                  font-size: 12.5px;
+                  color: var(--color-muted);
+                "
+                >Allow the public page to render</span
+              >
+            </div>
+            <div class="flow-connector">↓</div>
+            <div class="flow-row">
+              <div class="flow-node controller" style="min-width: 160px">
+                Has Session → /
+              </div>
+              <span
+                style="
+                  font-family: var(--font-body);
+                  font-size: 12.5px;
+                  color: var(--color-muted);
+                "
+                >Redirect authenticated users away from login/register</span
+              >
+            </div>
+          </div>
+
+          <h3>GlobalAPIWatcher.tsx</h3>
+          <p>
+            <code>GlobalAPIWatcher</code> registers a global Axios response
+            interceptor for app-wide session failures. When any response returns
+            <code>401 Unauthorized</code>, the watcher navigates the user to
+            <code>/auth/login</code> and replaces the current history entry.
+            This creates one centralized escape hatch for expired or invalid
+            sessions instead of handling that redirect separately in every
+            component.
+          </p>
+        </div>
+
+        <hr />
+
+        <!-- SSO -->
+        <div class="section" id="sso">
+          <h2>SSO Role in the Ecosystem</h2>
+          <p style="margin-top: 14px">
+            OneAuth Client is the place where users prove who they are. Product
+            applications redirect users to this portal when authentication is
+            required. After the API validates the session and client metadata,
+            OneAuth can issue an authorization code that the product backend
+            exchanges for a JWT access token.
+          </p>
+
+          <div class="flow">
+            <div class="flow-row">
+              <div class="flow-node dark" style="min-width: 160px">
+                Product App
+              </div>
+              <span class="flow-arrow">→</span>
+              <div class="flow-node" style="min-width: 160px">
+                OneAuth Client
+              </div>
+            </div>
+            <div class="flow-connector">↓</div>
+            <div class="flow-row">
+              <div class="flow-node" style="min-width: 160px">OneAuth API</div>
+              <span
+                style="
+                  font-family: var(--font-body);
+                  font-size: 12.5px;
+                  color: var(--color-muted);
+                "
+                >Session validated, client metadata checked</span
+              >
+            </div>
+            <div class="flow-connector">↓</div>
+            <div class="flow-row">
+              <div class="flow-node" style="min-width: 160px">
+                HTTP-only Cookie
+              </div>
+              <span
+                style="
+                  font-family: var(--font-body);
+                  font-size: 12.5px;
+                  color: var(--color-muted);
+                "
+                >Session persisted in Redis-backed cookie</span
+              >
+            </div>
+            <div class="flow-connector">↓</div>
+            <div class="flow-row">
+              <div class="flow-node controller" style="min-width: 160px">
+                Auth Code → Product
+              </div>
+              <span
+                style="
+                  font-family: var(--font-body);
+                  font-size: 12.5px;
+                  color: var(--color-muted);
+                "
+                >Product backend exchanges code for JWT</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <hr />
+
+        <!-- ENV -->
+        <div class="section" id="env">
+          <h2>Environment Variables</h2>
+          <p style="margin-top: 14px">
+            Create a <code>.env</code> file in the client project root. All
+            variables are read in <code>src/pages/utils/env.ts</code> and passed
+            into the shared Axios instance in
+            <code>src/pages/utils/axios.ts</code>.
+          </p>
+
+          <div class="env-block">
+            <div class="env-line">
+              <span class="env-key">VITE_AUTH_SERVER_API_URL</span
+              ><span class="env-eq">=</span
+              ><span class="env-val">http://localhost:8000</span>
+            </div>
+            <div class="env-line">
+              <span class="env-key">VITE_REQUEST_TIME_OUT</span
+              ><span class="env-eq">=</span><span class="env-val">10000</span>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Default / Current Value</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>VITE_AUTH_SERVER_API_URL</td>
+                  <td><code>http://localhost:8000</code></td>
+                  <td>
+                    Base URL for the OneAuth API. Used by the shared Axios
+                    client.
+                  </td>
+                </tr>
+                <tr>
+                  <td>VITE_REQUEST_TIME_OUT</td>
+                  <td><code>10000</code> ms</td>
+                  <td>
+                    Request timeout in milliseconds. Current intended value is
+                    10 seconds.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <hr />
+
+        <!-- SETUP -->
+        <div class="section" id="setup">
+          <h2>Installation &amp; Usage</h2>
+
+          <h3>Prerequisites</h3>
+          <ul style="margin-top: 10px">
+            <li>Node.js 20 or newer is recommended.</li>
+            <li>OneAuth API running locally or remotely.</li>
+            <li>A valid <code>.env</code> file in the client root.</li>
+          </ul>
+
+          <h3>Install dependencies</h3>
+          <pre><code>npm install</code></pre>
+
+          <h3>Run the development server</h3>
+          <pre><code>npm run dev</code></pre>
+
+          <p>Vite will print a local URL, usually:</p>
+          <pre><code>http://localhost:5173</code></pre>
+
+          <h3>Build for production</h3>
+          <pre><code>npm run build</code></pre>
+
+          <h3>Preview the production build</h3>
+          <pre><code>npm run preview</code></pre>
+        </div>
+
+        <hr />
+
+        <!-- SCRIPTS -->
+        <div class="section" id="scripts">
+          <h2>Available Scripts</h2>
+
+          <div class="table-wrap" style="margin-top: 14px">
+            <table>
+              <thead>
+                <tr>
+                  <th>Command</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>npm run dev</code></td>
+                  <td>Starts the Vite development server.</td>
+                </tr>
+                <tr>
+                  <td><code>npm run build</code></td>
+                  <td>Type-checks the app and creates a production build.</td>
+                </tr>
+                <tr>
+                  <td><code>npm run lint</code></td>
+                  <td>Runs ESLint across the project.</td>
+                </tr>
+                <tr>
+                  <td><code>npm run preview</code></td>
+                  <td>Serves the production build locally for verification.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <hr />
+
+        <!-- NOTES -->
+        <div class="section" id="notes">
+          <h2>Repository Notes</h2>
+          <ul style="margin-top: 14px">
+            <li>
+              The app uses <code>withCredentials: true</code>, so the API must
+              enable CORS credentials for the client domain.
+            </li>
+            <li>
+              Route guards depend on <code>/auth/session/validate</code>; keep
+              that endpoint stable.
+            </li>
+            <li>
+              API request timeouts are controlled by
+              <code>VITE_REQUEST_TIME_OUT</code>.
+            </li>
+            <li>
+              Feature folders should keep their API functions, validators, and
+              types close to the page they serve.
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- /content -->
+    </div>
+    <!-- /main -->
+  </body>
+</html>

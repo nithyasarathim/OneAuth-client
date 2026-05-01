@@ -1,23 +1,32 @@
 import handleApiError from "../../utils/apiErrorHandler";
 import api from "../../utils/axios";
 import toast from "react-hot-toast";
-import type { ProfileFormState } from "../types/profile.types";
+import type { AxiosResponse } from "axios";
+import type { ProfileFormState, UserInterface } from "../types/profile.types";
 
-const getProfile = async () => {
+type ProfileResponse = {
+  success: boolean;
+  user: UserInterface;
+};
+
+const getProfile = async (): Promise<AxiosResponse<ProfileResponse> | null> => {
   try {
-    const response = await api.get("/users/me");
+    const response = await api.get<ProfileResponse>("/users/me");
     if (!response) {
       toast.error("User profile not found");
     }
     return response;
   } catch (err) {
-    return handleApiError(err);
+    handleApiError(err);
+    return null;
   }
 };
 
-const updateProfile = async (updatedUser: ProfileFormState) => {
+const updateProfile = async (
+  updatedUser: ProfileFormState
+): Promise<UserInterface | null> => {
   try {
-    const response = await api.patch("/users/me", updatedUser);
+    const response = await api.patch<ProfileResponse>("/users/me", updatedUser);
     if (!response?.data?.success || !response.data.user) {
       toast.error("Failed to update profile");
       return null;
@@ -25,7 +34,8 @@ const updateProfile = async (updatedUser: ProfileFormState) => {
     toast.success("Profile updated successfully");
     return response.data.user;
   } catch (err) {
-    return handleApiError(err);
+    handleApiError(err);
+    return null;
   }
 };
 

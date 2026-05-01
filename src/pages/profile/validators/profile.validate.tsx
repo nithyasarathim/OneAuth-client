@@ -21,11 +21,6 @@ export const validateProfile = (
     return false;
   }
 
-  if (!form.department) {
-    toast.error("Department shouldn't be empty");
-    return false;
-  }
-
   if (form.description.length > 500) {
     toast.error("Bio must be under 500 characters");
     return false;
@@ -44,17 +39,12 @@ export const validateProfile = (
   if (originalUser) {
     const keys: (keyof ProfileFormState)[] = [
       "username",
-      "department",
       "githubUrl",
       "linkedinUrl",
       "description",
-      "isAvailable",
     ];
 
-    const hasChanged =
-      keys.some((key) => form[key] !== originalUser[key]) ||
-      form.skills.length !== originalUser.skills.length ||
-      !form.skills.every((s) => originalUser.skills.includes(s));
+    const hasChanged = keys.some((key) => form[key] !== originalUser[key]);
 
     if (!hasChanged) {
       toast.error("No changes detected");

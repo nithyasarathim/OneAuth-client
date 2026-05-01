@@ -1,1 +1,21 @@
-One Auth SSO for multiple projects.
+## Documentation
+
+> **API Reference** — [View Full Docs](https://nithyasarathim.github.io/OneAuth-api/documentation.html)
+> - [Service Overview](https://nithyasarathim.github.io/OneAuth-api/documentation.html#overview)
+> - [SSO Handshake](https://nithyasarathim.github.io/OneAuth-api/documentation.html#sso)
+> - [Runtime Architecture](https://nithyasarathim.github.io/OneAuth-api/documentation.html#architecture)
+> - [Security & Middleware](https://nithyasarathim.github.io/OneAuth-api/documentation.html#security)
+> - [Core Components](https://nithyasarathim.github.io/OneAuth-api/documentation.html#components)
+> - [Environment Variables](https://nithyasarathim.github.io/OneAuth-api/documentation.html#env)
+> - [API Surface](https://nithyasarathim.github.io/OneAuth-api/documentation.html#api)
+> - [Setup](https://nithyasarathim.github.io/OneAuth-api/documentation.html#setup)
+
+> **Client Reference** — [View Full Docs](https://nithyasarathim.github.io/OneAuth-client/documentation.html)
+> - [Product Overview](https://nithyasarathim.github.io/OneAuth-client/documentation.html#overview)
+> - [Registration Funnel](https://nithyasarathim.github.io/OneAuth-client/documentation.html#registration)
+> - [Project Architecture](https://nithyasarathim.github.io/OneAuth-client/documentation.html#architecture)
+> - [Routing Logic](https://nithyasarathim.github.io/OneAuth-client/documentation.html#routing)
+> - [SSO Role](https://nithyasarathim.github.io/OneAuth-client/documentation.html#sso)
+> - [Environment Variables](https://nithyasarathim.github.io/OneAuth-client/documentation.html#env)
+> - [Installation & Usage](https://nithyasarathim.github.io/OneAuth-client/documentation.html#setup)
+> - [Available Scripts](https://nithyasarathim.github.io/OneAuth-client/documentation.html#scripts)

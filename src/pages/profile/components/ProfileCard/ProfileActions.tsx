@@ -31,18 +31,6 @@ const ProfileActions = ({
       />
 
       <button
-        disabled={!user.resumeUrl}
-        onClick={() => openLink(user.resumeUrl)}
-        className={`rounded-xl px-5 py-2.5 text-sm font-medium ${
-          user.resumeUrl
-            ? "bg-sky-500 text-white hover:bg-sky-600"
-            : "bg-gray-200 text-gray-500"
-        }`}
-      >
-        {user.resumeUrl ? "View Resume" : "Resume not uploaded"}
-      </button>
-
-      <button
         onClick={switchToSettings}
         className="rounded-full bg-white p-2 text-sky-500 shadow"
       >
